@@ -5,37 +5,37 @@ class Product {
   static async getAll() {
     const db = GET_DB();
     const [rows] = await db.query(`
-            SELECT 
-                p.id AS product_id,
-                p.productName,
-                p.description,
-                sc.SupCategoryName AS subcategory_name,
-                c.categoryName AS category_name,
-                JSON_ARRAYAGG(img.IMG_URL) AS images, 
-                JSON_ARRAYAGG(JSON_OBJECT(
-                    'variation_id', pv.id,
-                    'size', pv.size,
-                    'price', pv.Price,
-                    'stock', pv.stock,
-                    'discount', d.discount
-                    )) AS variations 
-                FROM 
-                    Product p
-                LEFT JOIN 
-                    SupCategory sc ON p.ID_SupCategory = sc.id
-                LEFT JOIN 
-                    category c ON sc.categoryId = c.id
-                LEFT JOIN 
-                    ProductImage img ON p.id = img.ProductID
-                LEFT JOIN 
-                    productVariation pv ON p.id = pv.ID_Product
-                LEFT JOIN 
-                    Discount d ON pv.ID_discount = d.id
-                WHERE 
-                    p.isDelete = 0
-                GROUP BY 
-                    p.id;
-                    `);
+            				SELECT 
+                                p.id AS product_id,
+                                p.productName,
+                                p.description,
+                                sc.SupCategoryName AS subcategory_name,
+                                c.categoryName AS category_name,
+                                (SELECT JSON_ARRAYAGG(img.IMG_URL) 
+                                FROM productImage img 
+                                WHERE img.ProductID = p.id) AS images,
+                                JSON_ARRAYAGG(JSON_OBJECT(
+                                    'variation_id', pv.id,
+                                    'size', pv.size,
+                                    'price', pv.Price,
+                                    'stock', pv.stock,
+                                    'discount', d.discount
+                                )) AS variations 
+                            FROM 
+                                Product p
+                            LEFT JOIN 
+                                SupCategory sc ON p.ID_SupCategory = sc.id
+                            LEFT JOIN 
+                                category c ON sc.categoryId = c.id
+                            LEFT JOIN 
+                                productVariation pv ON p.id = pv.ID_Product
+                            LEFT JOIN 
+                                Discount d ON pv.ID_discount = d.id
+                            WHERE 
+                                p.isDelete = 0 
+                            GROUP BY 
+                                p.id, p.productName, p.description, sc.SupCategoryName, c.categoryName;
+                                `);
     return rows;
   }
 
@@ -71,7 +71,17 @@ class Product {
     return result.affectedRows > 0;
   }
 
-  static async findById(productId) {
+  // Tìm sản phẩm theo ID
+  static async findById(id) {
+    const db = GET_DB();
+    const [rows] = await db.query(
+      "SELECT * FROM Product WHERE id = ? AND isDelete = 0",
+      [id]
+    );
+    return rows[0] || null;
+  }
+
+  static async findByIdWithDetails(productId) {
     const db = GET_DB();
     const [rows] = await db.query(`
         SELECT 
