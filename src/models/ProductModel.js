@@ -5,33 +5,41 @@ class Product {
   static async getAll() {
     const db = GET_DB();
     const [rows] = await db.query(`
-            				SELECT 
-                                p.id AS product_id,
-                                p.productName,
-                                sc.SupCategoryName AS subcategory_name,
-                                c.categoryName AS category_name,
-                                (SELECT img.IMG_URL
-                                FROM productImage img 
-                                WHERE img.ProductID = p.id LIMIT 1) AS images,
-                                MIN(pv.Price) AS min_price,
-                                MAX(pv.Price) AS max_price
-                            FROM 
-                                Product p
-                            LEFT JOIN 
-                                SupCategory sc ON p.ID_SupCategory = sc.id
-                            LEFT JOIN 
-                                category c ON sc.categoryId = c.id
-                            LEFT JOIN 
-                                productVariation pv ON p.id = pv.ID_Product
-                            LEFT JOIN 
-                                Discount d ON pv.ID_discount = d.id
-                            WHERE
-                                p.isDelete = 0 
-                            GROUP BY 
-                                p.id, p.productName, sc.SupCategoryName, c.categoryName;
+        SELECT 
+            p.id AS product_id,
+            p.productName,
+            sc.SupCategoryName AS subcategory_name,
+            c.categoryName AS category_name,
+            (SELECT img.IMG_URL
+            FROM ProductImage img 
+            WHERE img.ProductID = p.id LIMIT 1) AS images,
+            MIN(CASE 
+                    WHEN d.discount IS NOT NULL 
+                    THEN pv.Price * (1 - d.discount / 100) 
+                    ELSE pv.Price 
+                END) AS min_price,
+            MAX(CASE 
+                    WHEN d.discount IS NOT NULL 
+                    THEN pv.Price * (1 - d.discount / 100) 
+                    ELSE pv.Price 
+                END) AS max_price
+        FROM 
+            Product p
+        LEFT JOIN 
+            SupCategory sc ON p.ID_SupCategory = sc.id
+        LEFT JOIN 
+            category c ON sc.categoryId = c.id
+        LEFT JOIN 
+            productVariation pv ON p.id = pv.ID_Product
+        LEFT JOIN 
+            Discount d ON pv.ID_discount = d.id
+        WHERE
+            p.isDelete = 0 
+            AND pv.isDelete = 0
+        GROUP BY 
+            p.id, p.productName, sc.SupCategoryName, c.categoryName;
 
-
-                                `);
+            `);
     return rows;
   }
 
@@ -70,40 +78,43 @@ class Product {
   // Tìm sản phẩm theo ID
   static async findById(productId) {
     const db = GET_DB();
-    const [rows] = await db.query(`
-                            SELECT 
-                                p.id AS product_id,
-                                p.productName,
-                                p.description,
-                                sc.SupCategoryName AS subcategory_name,
-                                c.categoryName AS category_name,
-                                (SELECT JSON_ARRAYAGG(img.IMG_URL) 
-                                FROM productImage img 
-                                WHERE img.ProductID = p.id) AS images,
-                                JSON_ARRAYAGG(JSON_OBJECT(
-                                    'variation_id', pv.id,
-                                    'size', pv.size,
-                                    'price', pv.Price,
-                                    'stock', pv.stock,
-                                    'discount', d.discount
-                                )) AS variations 
-                            FROM 
-                                Product p
-                            LEFT JOIN 
-                                SupCategory sc ON p.ID_SupCategory = sc.id
-                            LEFT JOIN 
-                                category c ON sc.categoryId = c.id
-                            LEFT JOIN 
-                                productVariation pv ON p.id = pv.ID_Product
-                            LEFT JOIN 
-                                Discount d ON pv.ID_discount = d.id
-                            WHERE
-                                p.isDelete = 0 and p.id = ?
-                            GROUP BY 
-                                p.id, p.productName, p.description, sc.SupCategoryName, c.categoryName;
-    `, [productId]);
+    const [rows] = await db.query(
+      `
+        SELECT 
+            p.id AS product_id,
+            p.productName,
+            p.description,
+            sc.SupCategoryName AS subcategory_name,
+            c.categoryName AS category_name,
+            (SELECT JSON_ARRAYAGG(img.IMG_URL) 
+            FROM productImage img 
+            WHERE img.ProductID = p.id) AS images,
+            JSON_ARRAYAGG(JSON_OBJECT(
+                'variation_id', pv.id,
+                'size', pv.size,
+                'price', pv.Price,
+                'stock', pv.stock,
+                'discount', d.discount
+            )) AS variations 
+        FROM 
+            Product p
+        LEFT JOIN 
+            SupCategory sc ON p.ID_SupCategory = sc.id
+        LEFT JOIN 
+            category c ON sc.categoryId = c.id
+        LEFT JOIN 
+            productVariation pv ON p.id = pv.ID_Product
+        LEFT JOIN 
+            Discount d ON pv.ID_discount = d.id
+        WHERE
+            p.isDelete = 0 and p.id = ?
+        GROUP BY 
+            p.id, p.productName, p.description, sc.SupCategoryName, c.categoryName;
+    `,
+      [productId]
+    );
     return rows[0] || null;
-}
+  }
 }
 
 export default Product;
