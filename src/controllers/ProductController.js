@@ -10,6 +10,15 @@ class ProductController {
         }
     }
 
+    static async getAll(req,res){
+        try{
+            const products = await ProductService.getAll(req.query);
+            res.status(200).json(products);
+        }catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+
     static async createProduct(req, res) {
         try {
             const newProduct = await ProductService.createProduct(req.body);

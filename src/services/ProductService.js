@@ -2,6 +2,10 @@ import Product from "~/models/ProductModel";
 
 class ProductService {
     static async getAllProducts() {
+        return await Product.getAllProduct();
+    }
+
+    static async getAll(){
         return await Product.getAll();
     }
 
@@ -32,6 +36,7 @@ class ProductService {
         }
         return product;
     }
+
 }
 
 export default ProductService;
