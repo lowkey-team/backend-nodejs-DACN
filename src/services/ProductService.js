@@ -68,6 +68,30 @@ class ProductService {
     }
     return product;
   }
+
+  static async createMultiple(variations) {
+    const db = GET_DB();
+    const values = variations.map((variation) => [
+      variation.ID_Product,
+      variation.size,
+      variation.Price,
+      variation.stock,
+      variation.ID_discount,
+      variation.isDelete,
+      variation.createdAt,
+      variation.updatedAt,
+    ]);
+
+    const [result] = await db.query(
+      `
+        INSERT INTO productVariation (ID_Product, size, Price, stock, ID_discount, isDelete, createdAt, updatedAt)
+        VALUES ?
+    `,
+      [values]
+    );
+
+    return result;
+  }
 }
 
 export default ProductService;
