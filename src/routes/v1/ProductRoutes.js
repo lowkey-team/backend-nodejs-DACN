@@ -1,21 +1,24 @@
-import express from 'express';
-import multer from 'multer';
-import ProductController from '~/controllers/ProductController';
-import { ProductValidation } from '~/validations/ProductValidation';
+import express from "express";
+import multer from "multer";
+import ProductController from "~/controllers/ProductController";
+import { ProductValidation } from "~/validations/ProductValidation";
 
 const Router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: "uploads/" });
 
-Router.route('/')
-    .get(ProductController.getAllProducts)  
-    .post(ProductValidation.createProduct, ProductController.createProduct); 
+Router.route("/")
+  .get(ProductController.getAllProducts)
+  .post(upload.array("images", 10), ProductController.createProduct);
 
-Router.route('/getAll')
-    .get(ProductController.getAll);
+Router.route("/getAll").get(ProductController.getAll);
 
-Router.route('/:id')
-    .get(ProductController.findProductById) 
-    .put(ProductValidation.updateProduct, ProductController.updateProduct) 
-    .delete(ProductController.deleteProduct);  
+Router.route("/:id")
+  .get(ProductController.findProductById)
+  .put(
+    upload.array("images", 10),
+    ProductValidation.updateProduct,
+    ProductController.updateProduct
+  )
+  .delete(ProductController.deleteProduct);
 
 export const productRoutes = Router;

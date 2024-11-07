@@ -20,10 +20,15 @@ class ProductController {
     }
 
     static async createProduct(req, res) {
+        console.log("Inside Controller"); 
+        console.log("Body in Controller:", req.body);
+        console.log("Files in Controller:", req.files);
         try {
-            const newProduct = await ProductService.createProduct(req.body);
+            const newProduct = await ProductService.createProduct(req.body, req.files);
+            console.log("upload oke controller " );
             res.status(201).json(newProduct);
         } catch (err) {
+            console.log("upload failed controller error: " + err);
             res.status(500).json({ message: err.message });
         }
     }
