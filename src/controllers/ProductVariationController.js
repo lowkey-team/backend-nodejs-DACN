@@ -41,7 +41,9 @@ class ProductVariationController {
       if (result) {
         res.status(200).json({ message: "Biến thể sản phẩm đã bị xóa" });
       } else {
-        res.status(404).json({ message: "Biến thể sản phẩm không tồn tại" });
+        res
+          .status(404)
+          .json({ message: "Biến thể sản phẩm không tồn tạidfdgd" });
       }
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -60,7 +62,7 @@ class ProductVariationController {
 
   static async createMultiple(req, res) {
     const variations = req.body;
-
+    console.log("Dữ liệu biến thể sản phẩm:", variations);
     try {
       const result = await ProductVariationService.createMultipleVariations(
         variations
@@ -68,6 +70,18 @@ class ProductVariationController {
       res
         .status(201)
         .json({ message: "Tạo thành công nhiều biến thể", data: result });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async updateMultiple(req, res) {
+    const variations = req.body;
+    console.log("updateMultiple controller", variations);
+
+    try {
+      const result = await ProductVariationService.updateMultiple(variations);
+      res.status(200).json({ message: result.message });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }

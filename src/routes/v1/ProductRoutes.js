@@ -11,6 +11,7 @@ Router.route("/")
   .post(upload.array("images", 10), ProductController.createProduct);
 
 Router.route("/getAll").get(ProductController.getAll);
+Router.route("/getTop10").get(ProductController.getTop10NewestProducts);
 
 Router.route("/:id")
   .get(ProductController.findProductById)

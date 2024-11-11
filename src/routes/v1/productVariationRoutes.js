@@ -13,12 +13,14 @@ Router.route("/")
 
 Router.route("/:id")
   .get(ProductVariationController.findVariationById)
-  .put(
-    ProductVariationValidation.updateVariation,
-    ProductVariationController.updateVariation
-  )
+  // .put(
+  //   ProductVariationValidation.updateVariation,
+  //   ProductVariationController.updateVariation
+  // )
   .delete(ProductVariationController.deleteVariation);
 
-Router.route("/bulk").post(ProductVariationController.createMultiple);
+Router.route("/bulk")
+  .post(ProductVariationController.createMultiple)
+  .put(ProductVariationController.updateMultiple);
 
 export const productVariationRoutes = Router;

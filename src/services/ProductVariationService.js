@@ -12,7 +12,7 @@ class ProductVariationService {
   static async updateVariation(id, variationData) {
     const variation = await ProductVariation.findById(id);
     if (!variation) {
-      throw new Error("Biến thể sản phẩm không tồn tại");
+      throw new Error("Biến thể sản phẩm không tồn uodtae");
     }
     return await ProductVariation.update(id, variationData);
   }
@@ -20,7 +20,7 @@ class ProductVariationService {
   static async deleteVariation(id) {
     const variation = await ProductVariation.findById(id);
     if (!variation) {
-      throw new Error("Biến thể sản phẩm không tồn tại");
+      throw new Error("Biến thể sản phẩm không tồn dele");
     }
     return await ProductVariation.delete(id);
   }
@@ -28,7 +28,7 @@ class ProductVariationService {
   static async findVariationById(id) {
     const variation = await ProductVariation.findById(id);
     if (!variation) {
-      throw new Error("Biến thể sản phẩm không tồn tại");
+      throw new Error("Biến thể sản phẩm không tồn tạisdvsdvsdvsdv");
     }
     return variation;
   }
@@ -39,6 +39,16 @@ class ProductVariationService {
       return result;
     } catch (err) {
       throw new Error(`Lỗi khi tạo nhiều biến thể: ${err.message}`);
+    }
+  }
+
+  static async updateMultiple(variations) {
+    console.log("service");
+    try {
+      const result = await ProductVariation.updateMultiple(variations);
+      return result;
+    } catch (err) {
+      throw new Error(`Lỗi khi cập nhật nhiều biến thể: ${err.message}`);
     }
   }
 }

@@ -11,6 +11,10 @@ class ProductService {
   static async getAll() {
     return await Product.getAll();
   }
+
+  static async getTop10NewestProducts() {
+    return await Product.getTop10NewestProducts();
+  }
   static async createProduct(productData, files) {
     if (files && files.length > 0) {
       const imageUrls = [];
