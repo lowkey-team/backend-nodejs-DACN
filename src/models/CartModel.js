@@ -51,7 +51,8 @@ class Cart {
                 FROM productimage pi
                 WHERE pi.ProductID = p.id
                 ORDER BY pi.id ASC
-                LIMIT 1) AS first_image
+                LIMIT 1) AS first_image,
+                (c.quantity * (pv.Price - (pv.Price * COALESCE(d.discount, 0) / 100))) AS total_price
             FROM 
                 carts c 
             INNER JOIN 
