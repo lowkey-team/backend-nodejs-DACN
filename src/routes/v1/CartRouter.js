@@ -1,0 +1,14 @@
+import express from "express";
+import CartController from "~/controllers/CartController";
+
+const Router = express.Router();
+
+Router.post("/cart", CartController.addProductToCart);
+
+Router.get("/cart/:userId", CartController.getCartByUserId);
+
+Router.delete("/cart/:cartId", CartController.deleteCartById);
+
+Router.delete("/cart", CartController.deleteMultipleCartsById);
+
+export const CartRoutes = Router;

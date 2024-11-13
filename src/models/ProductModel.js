@@ -94,12 +94,18 @@ class Product {
                 pv.stock,
                 p.createdAt,
                 sc.SupCategoryName AS SupCategoryName,
-                ROW_NUMBER() OVER (PARTITION BY p.id ORDER BY IFNULL(d.discount, 0) DESC, pv.Price ASC) AS rn 
+                c.categoryName AS categoryName,
+                ROW_NUMBER() OVER (PARTITION BY p.id ORDER BY IFNULL(d.discount, 0) DESC, pv.Price ASC) AS rn,
+                CASE 
+     WHEN DATEDIFF(CURDATE(), p.createdAt) <= 30 THEN 'true' 
+     ELSE 'false'
+    END AS isNew
             FROM product p
             JOIN productvariation pv ON p.id = pv.ID_Product
             LEFT JOIN variation_discount vd ON pv.id = vd.ID_Variation
             LEFT JOIN discount d ON vd.ID_Discount = d.id
             LEFT JOIN supcategory sc ON p.ID_SupCategory = sc.id
+            LEFT JOIN category c ON sc.categoryId = c.id 
             WHERE (vd.status = 1 OR vd.status IS NULL)
         )
         SELECT 
@@ -113,6 +119,8 @@ class Product {
             rpv.stock,
             rpv.createdAt,
             rpv.SupCategoryName,
+            rpv.categoryName, 
+            rpv.isNew,   
             (SELECT pi.IMG_URL 
             FROM productimage pi 
             WHERE pi.ProductID = rpv.product_id 
@@ -120,10 +128,7 @@ class Product {
             LIMIT 1) AS FirstImage
         FROM RankedProductVariations rpv
         WHERE rpv.rn = 1 
-        ORDER BY rpv.createdAt DESC
-        LIMIT 10;
-
-
+        ORDER BY rpv.createdAt DESC;
     `);
     return rows;
   }
@@ -257,8 +262,8 @@ class Product {
               'stock', pv.stock,
               'isDelete', pv.isDelete
           )) AS variations,
-          MIN(pv.Price) AS min_price,  -- Giá thấp nhất của sản phẩm
-          MAX(pv.Price) AS max_price   -- Giá cao nhất của sản phẩm
+          MIN(pv.Price) AS min_price,  
+          MAX(pv.Price) AS max_price  
       FROM 
           Product p
       LEFT JOIN 

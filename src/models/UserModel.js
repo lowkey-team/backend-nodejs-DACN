@@ -1,42 +1,77 @@
+import jwt from "jsonwebtoken";
 import { GET_DB } from "~/config/mysql";
+import bcrypt from "bcrypt";
+
+const SECRET_KEY = "your_secret_key";
 
 class User {
-    // Lấy tất cả người dùng
-    static async getAll() {
-        const db = GET_DB();
-        const [rows] = await db.query('SELECT * FROM Users WHERE isDelete = 0'); 
-        return rows;
+  static async findByPhone(Phone) {
+    const db = GET_DB();
+    const [rows] = await db.query(
+      "SELECT * FROM Users WHERE Phone = ? AND isDelete = 0",
+      [Phone]
+    );
+    console.log("log phone model: " + Phone);
+    return rows[0];
+  }
+  static async findByEmail(Email) {
+    const db = GET_DB();
+    const [rows] = await db.query(
+      "SELECT * FROM Users WHERE Email = ? AND isDelete = 0",
+      [Email]
+    );
+    console.log("log email model: " + Email);
+    return rows[0];
+  }
+  static async findByEmail(Email) {
+    const db = GET_DB();
+    const [rows] = await db.query(
+      "SELECT * FROM Users WHERE Email = ? AND isDelete = 0",
+      [Email]
+    );
+    return rows[0];
+  }
+
+  static async create(userData) {
+    const db = GET_DB();
+    const { FullName, Phone, Passwords, address, Email } = userData;
+    const hashedPassword = await bcrypt.hash(Passwords, 10);
+
+    const [result] = await db.query(
+      "INSERT INTO Users (FullName, Phone, Passwords, address, Email, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())",
+      [FullName, Phone, hashedPassword, address, Email]
+    );
+
+    return { id: result.insertId, FullName, Phone, Email };
+  }
+  static async login(phone, password) {
+    console.log("data login", phone, password);
+    const db = GET_DB();
+    const [rows] = await db.query(
+      "SELECT * FROM Users WHERE Phone = ? AND isDelete = 0",
+      [phone]
+    );
+    const user = rows[0];
+
+    if (!user) {
+      throw new Error("Người dùng không tồn tại");
     }
 
-    // Tạo người dùng mới
-    static async create(userData) {
-        const { FullName, Phone, Passwords, address } = userData;
-        const db = GET_DB();
-        const [result] = await db.query('INSERT INTO Users (FullName, Phone, Passwords, address, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())', [FullName, Phone, Passwords, address]);
-        return { id: result.insertId, ...userData };
+    const passwordMatch = await bcrypt.compare(password, user.Passwords);
+    if (!passwordMatch) {
+      throw new Error("Mật khẩu không đúng");
     }
 
-    // Cập nhật người dùng
-    static async update(id, userData) {
-        const { FullName, Phone, address } = userData;
-        const db = GET_DB();
-        await db.query('UPDATE Users SET FullName = ?, Phone = ?, address = ?, updatedAt = NOW() WHERE id = ? AND isDelete = 0', [FullName, Phone, address, id]);
-        return { id, ...userData };
-    }
+    const token = jwt.sign({ id: user.id, phone: user.Phone }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
 
-    // Xóa người dùng (đánh dấu là đã xóa)
-    static async delete(id) {
-        const db = GET_DB();
-        const [result] = await db.query('UPDATE Users SET isDelete = 1 WHERE id = ?', [id]);
-        return result.affectedRows > 0; 
-    }
-
-    // Tìm người dùng theo ID
-    static async findById(id) {
-        const db = GET_DB();
-        const [rows] = await db.query('SELECT * FROM Users WHERE id = ? AND isDelete = 0', [id]);
-        return rows[0] || null; 
-    }
+    console.log("token :", token);
+    return {
+      token,
+      user: { id: user.id, FullName: user.FullName, Phone: user.Phone },
+    };
+  }
 }
 
 export default User;
