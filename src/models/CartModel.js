@@ -73,6 +73,29 @@ class Cart {
     return rows;
   }
 
+  static async updateProductQuantity(cartId, quantity) {
+    const db = GET_DB();
+
+    if (quantity <= 0) {
+      return { message: "Số lượng phải lớn hơn 0." };
+    }
+
+    const [result] = await db.query(
+      "UPDATE carts SET quantity = ? WHERE id = ?",
+      [quantity, cartId]
+    );
+
+    if (result.affectedRows > 0) {
+      return {
+        message: "Cập nhật số lượng sản phẩm thành công.",
+      };
+    } else {
+      return {
+        message: "Không tìm thấy sản phẩm trong giỏ hàng.",
+      };
+    }
+  }
+
   static async deleteCartById(cartId) {
     const db = GET_DB();
     const [result] = await db.query("DELETE FROM carts WHERE id = ?", [cartId]);

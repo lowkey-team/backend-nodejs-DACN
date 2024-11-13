@@ -62,6 +62,18 @@ class CartController {
       return res.status(500).json({ message: error.message });
     }
   }
+
+  static async updateProductQuantity(req, res) {
+    try {
+      const { cartId, quantity } = req.body;
+      await CartService.updateProductQuantity(cartId, quantity);
+      return res
+        .status(200)
+        .json({ message: "Cập nhật số lượng sản phẩm thành công." });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 export default CartController;

@@ -30,6 +30,19 @@ class CartService {
     }
     return { message: "Xóa giỏ hàng thành công" };
   }
+
+  static async updateProductQuantity(cartId, quantity) {
+    if (quantity <= 0) {
+      throw new Error("Số lượng phải lớn hơn 0");
+    }
+
+    const result = await Cart.updateProductQuantity(cartId, quantity);
+    if (result.message === "Không tìm thấy sản phẩm trong giỏ hàng.") {
+      throw new Error(result.message);
+    }
+
+    return { message: "Cập nhật số lượng sản phẩm thành công" };
+  }
 }
 
 export default CartService;
