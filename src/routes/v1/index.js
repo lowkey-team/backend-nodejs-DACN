@@ -7,6 +7,7 @@ import { imageRoutes } from "./imageRouters";
 import { productVariationRoutes } from "./productVariationRoutes";
 import { AuthRouter } from "./AuthRouter";
 import { CartRoutes } from "./CartRouter";
+import { InvoiceRoute } from "./InvoiceRouter";
 
 const Router = express.Router();
 
@@ -18,5 +19,6 @@ Router.use("/image", imageRoutes);
 Router.use("/variation", productVariationRoutes);
 Router.use("/Auth", AuthRouter);
 Router.use("/cart", CartRoutes);
+Router.use("/invoices", InvoiceRoute);
 
 export const APIs_V1 = Router;
