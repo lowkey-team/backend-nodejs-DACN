@@ -12,6 +12,9 @@ Router.route("/")
 
 Router.route("/getAll").get(ProductController.getAll);
 Router.route("/getTop10").get(ProductController.getTop10NewestProducts);
+Router.route("/getSortByCategory").get(
+  ProductController.getAllProductsSortedByCategory
+);
 
 Router.route("/:id")
   .get(ProductController.findProductById)

@@ -28,6 +28,16 @@ class ProductController {
     }
   }
 
+  static async getAllProductsSortedByCategory(req, res, next) {
+    try {
+      const products = await ProductService.getAllProductsSortedByCategory(
+        req.query
+      );
+      res.status(200).json(products);
+    } catch (error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
   static async createProduct(req, res) {
     console.log("Inside Controller");
     console.log("Body in Controller:", req.body);
