@@ -47,17 +47,16 @@ class Invoice {
           paymentMethod,
           orderStatus,
           note || null,
-          receivedDate || null, // Đảm bảo nhận giá trị của receivedDate
-          shippingAddress || null, // Địa chỉ giao hàng có thể null
-          phoneNumber || null, // Số điện thoại có thể null
-          customerName || null, // Tên khách hàng có thể null
+          receivedDate || null,
+          shippingAddress || null,
+          phoneNumber || null,
+          customerName || null,
         ]
       );
 
       console.log("Hóa đơn đã được tạo, ID:", invoiceResult.insertId);
       const invoiceId = invoiceResult.insertId;
 
-      // Thêm chi tiết hóa đơn
       const invoiceDetails = items.map((item) => [
         invoiceId,
         item.productVariationId,
@@ -68,7 +67,6 @@ class Invoice {
 
       console.log("Chi tiết hóa đơn:", invoiceDetails);
 
-      // Thực hiện query để thêm chi tiết vào bảng InvoiceDetail
       await connection.query(
         `INSERT INTO InvoiceDetail (ID_Invoice, ID_productVariation, UnitPrice, Amount, Quantity) 
          VALUES ?`,
@@ -88,6 +86,84 @@ class Invoice {
       await connection.rollback();
       console.error("Lỗi khi tạo hóa đơn:", error.message);
       throw new Error(`Lỗi khi tạo hóa đơn : ${error.message}`);
+    } finally {
+      connection.release();
+      console.log("Kết thúc giao dịch.");
+    }
+  }
+
+  static async updateInvoice(invoiceData) {
+    const {
+      invoiceId,
+      employeerId,
+      paymentStatus,
+      orderStatus,
+      receivedDate,
+      shippingAddress,
+      phoneNumber,
+    } = invoiceData;
+
+    const db = await GET_DB();
+    const connection = await db.getConnection();
+
+    try {
+      console.log("Bắt đầu giao dịch cập nhật hóa đơn...", invoiceData);
+
+      await connection.beginTransaction();
+
+      const updateFields = [];
+      const updateValues = [];
+
+      if (employeerId) {
+        updateFields.push("ID_Employeer = ?");
+        updateValues.push(employeerId);
+      }
+      if (paymentStatus) {
+        updateFields.push("paymentStatus = ?");
+        updateValues.push(paymentStatus);
+      }
+      if (orderStatus) {
+        updateFields.push("orderStatus = ?");
+        updateValues.push(orderStatus);
+      }
+      if (receivedDate) {
+        updateFields.push("receivedDate = ?");
+        updateValues.push(receivedDate);
+      }
+      if (shippingAddress) {
+        updateFields.push("shippingAddress = ?");
+        updateValues.push(shippingAddress);
+      }
+      if (phoneNumber) {
+        updateFields.push("phoneNumber = ?");
+        updateValues.push(phoneNumber);
+      }
+
+      if (updateFields.length === 0) {
+        throw new Error("Không có dữ liệu cần cập nhật.");
+      }
+
+      const query = `UPDATE Invoice 
+                     SET ${updateFields.join(", ")} 
+                     WHERE ID = ?`;
+
+      updateValues.push(invoiceId);
+
+      await connection.query(query, updateValues);
+
+      console.log("Hóa đơn đã được cập nhật, ID:", invoiceId);
+
+      await connection.commit();
+      console.log("Giao dịch đã hoàn thành.");
+
+      return {
+        message: "Cập nhật hóa đơn thành công.",
+        invoiceId,
+      };
+    } catch (error) {
+      await connection.rollback();
+      console.error("Lỗi khi cập nhật hóa đơn:", error.message);
+      throw new Error(`Lỗi khi cập nhật hóa đơn : ${error.message}`);
     } finally {
       connection.release();
       console.log("Kết thúc giao dịch.");
