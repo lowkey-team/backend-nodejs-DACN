@@ -8,6 +8,7 @@ import { productVariationRoutes } from "./productVariationRoutes";
 import { AuthRouter } from "./AuthRouter";
 import { CartRoutes } from "./CartRouter";
 import { InvoiceRoute } from "./InvoiceRouter";
+import { paymentRoute } from "./paymentRoute";
 
 const Router = express.Router();
 
@@ -20,5 +21,6 @@ Router.use("/variation", productVariationRoutes);
 Router.use("/Auth", AuthRouter);
 Router.use("/cart", CartRoutes);
 Router.use("/invoices", InvoiceRoute);
+Router.use("/", paymentRoute);
 
 export const APIs_V1 = Router;
