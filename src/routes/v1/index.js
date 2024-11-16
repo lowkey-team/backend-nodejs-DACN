@@ -9,6 +9,7 @@ import { AuthRouter } from "./AuthRouter";
 import { CartRoutes } from "./CartRouter";
 import { InvoiceRoute } from "./InvoiceRouter";
 import { paymentRoute } from "./paymentRoute";
+import { VoucherRouter } from "./VoucherRouter";
 
 const Router = express.Router();
 
@@ -22,5 +23,6 @@ Router.use("/Auth", AuthRouter);
 Router.use("/cart", CartRoutes);
 Router.use("/invoices", InvoiceRoute);
 Router.use("/", paymentRoute);
+Router.use("/voucher", VoucherRouter);
 
 export const APIs_V1 = Router;
