@@ -9,6 +9,18 @@ class VoucherService {
     return await Voucher.create(voucherData);
   }
 
+  static async addVoucherToUser(ID_User, ID_Voucher) {
+    const existingVoucher = await Voucher.findVoucherByUserAndVoucher(
+      ID_User,
+      ID_Voucher
+    );
+
+    if (existingVoucher) {
+      return { message: "Voucher has already been added to this user." };
+    }
+    return await Voucher.addVoucherToUser(ID_User, ID_Voucher);
+  }
+
   static async updateVoucher(id, voucherData) {
     const voucher = await Voucher.findById(id);
     if (!voucher) {

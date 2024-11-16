@@ -19,6 +19,19 @@ class VoucherController {
     }
   }
 
+  static async addVoucherToUser(req, res) {
+    const { ID_User, ID_Voucher } = req.body;
+    try {
+      const newVoucher = await VoucherService.addVoucherToUser(
+        ID_User,
+        ID_Voucher
+      );
+      res.status(201).json(newVoucher);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   static async updateVoucher(req, res) {
     const { id } = req.params;
     try {

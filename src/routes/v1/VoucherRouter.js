@@ -5,6 +5,7 @@ const Router = express.Router();
 
 Router.get("/", VoucherController.getAllVouchers);
 Router.post("/", VoucherController.createVoucher);
+Router.post("/addVoucherToUser", VoucherController.addVoucherToUser);
 Router.put("/:id", VoucherController.updateVoucher);
 Router.delete("/:id", VoucherController.deleteVoucher);
 Router.get("/:id", VoucherController.findVoucherById);
