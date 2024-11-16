@@ -12,6 +12,7 @@ class InvoiceController {
   }
 
   static async updateInvoice(req, res) {
+    console.log("Dữ liệu hóa đơn nhận được:", req.body);
     try {
       const invoiceData = req.body;
       const result = await InvoiceService.updateInvoice(invoiceData);

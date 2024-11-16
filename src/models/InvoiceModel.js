@@ -26,10 +26,8 @@ class Invoice {
     try {
       console.log("Bắt đầu giao dịch tạo hóa đơn...", invoiceData);
 
-      // Bắt đầu giao dịch
       await connection.beginTransaction();
 
-      // Thực hiện query để thêm dữ liệu vào bảng Invoice
       const [invoiceResult] = await connection.query(
         `INSERT INTO Invoice 
           (ID_Employeer, ID_User, totalAmount, discountAmount, finalAmount, voucherCode, 
