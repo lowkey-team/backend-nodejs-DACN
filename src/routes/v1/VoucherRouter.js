@@ -3,7 +3,11 @@ import VoucherController from "~/controllers/VoucherController";
 
 const Router = express.Router();
 
-Router.get("/", VoucherController.getAllVouchers);
+Router.get("/getVoucherByUser/:id", VoucherController.getAllVouchers);
+Router.get(
+  "/GetVouchersSaveByUserID/:id",
+  VoucherController.GetVouchersSaveByUserID
+);
 Router.post("/", VoucherController.createVoucher);
 Router.post("/addVoucherToUser", VoucherController.addVoucherToUser);
 Router.put("/:id", VoucherController.updateVoucher);

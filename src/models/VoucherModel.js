@@ -1,12 +1,31 @@
 import { GET_DB } from "~/config/mysql";
 
 class Voucher {
-  static async getAll() {
+  static async getAll(id_user) {
+    console.log("voucher nugoi dung", id_user);
     const db = GET_DB();
-    const [rows] = await db.query(
-      `SELECT * FROM Voucher WHERE isActive = 1 AND endDate > NOW()`
-    );
-    return rows;
+    try {
+      const [rows] = await db.query(`CALL GetUnusedVouchersByUser(?);`, [
+        id_user && !isNaN(id_user) ? id_user : null,
+      ]);
+
+      return rows[0];
+    } catch (error) {
+      console.error("Error fetching unused vouchers:", error);
+      throw error;
+    }
+  }
+
+  static async GetVouchersSaveByUserID(userId) {
+    console.log("voucher nugoi dung", userId);
+    const db = GET_DB();
+    try {
+      const [rows] = await db.query("CALL GetVouchersSaveByUser(?);", [userId]);
+      return rows[0];
+    } catch (error) {
+      console.error("Error fetching saved vouchers:", error);
+      throw error;
+    }
   }
 
   static async create(voucherData) {
@@ -83,10 +102,9 @@ class Voucher {
 
   static async findByCode(voucherCode) {
     const db = GET_DB();
-    const [rows] = await db.query(
-      "SELECT * FROM Voucher WHERE voucherCode = ?",
-      [voucherCode]
-    );
+    const [rows] = await db.query("SELECT * FROM Voucher WHERE id = ?", [
+      voucherCode,
+    ]);
     return rows[0] || null;
   }
 

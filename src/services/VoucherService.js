@@ -1,8 +1,12 @@
 import Voucher from "~/models/VoucherModel";
 
 class VoucherService {
-  static async getAllVouchers() {
-    return await Voucher.getAll();
+  static async getAllVouchers(id_user) {
+    return await Voucher.getAll(id_user);
+  }
+
+  static async GetVouchersSaveByUserID(id_user) {
+    return await Voucher.GetVouchersSaveByUserID(id_user);
   }
 
   static async createVoucher(voucherData) {
@@ -10,6 +14,10 @@ class VoucherService {
   }
 
   static async addVoucherToUser(ID_User, ID_Voucher) {
+    return await Voucher.addVoucherToUser(ID_User, ID_Voucher);
+  }
+
+  static async findVoucherByUserAndVoucher(ID_User, ID_Voucher) {
     const existingVoucher = await Voucher.findVoucherByUserAndVoucher(
       ID_User,
       ID_Voucher
@@ -18,7 +26,6 @@ class VoucherService {
     if (existingVoucher) {
       return { message: "Voucher has already been added to this user." };
     }
-    return await Voucher.addVoucherToUser(ID_User, ID_Voucher);
   }
 
   static async updateVoucher(id, voucherData) {

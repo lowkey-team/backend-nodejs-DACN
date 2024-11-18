@@ -5,5 +5,13 @@ const router = express.Router();
 
 router.post("/create", InvoiceController.createInvoice);
 router.put("/update", InvoiceController.updateInvoice);
+router.get(
+  "/invoices/:id_user/:orderStatus",
+  InvoiceController.getInvoiceByIdUser
+);
+router.get(
+  "/detail/:ID_Invoice",
+  InvoiceController.getInvoiceDetailFindByID_Invoice
+);
 
 export const InvoiceRoute = router;

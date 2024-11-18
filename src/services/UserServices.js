@@ -51,6 +51,10 @@ class UserService {
 
     return await User.create(userData);
   }
+
+  static async findById(id) {
+    return await User.findById(id);
+  }
 }
 
 export default UserService;

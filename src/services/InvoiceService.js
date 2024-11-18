@@ -19,6 +19,26 @@ class InvoiceService {
       throw new Error(`Lỗi khi cập nhật hóa đơn: ${error.message}`);
     }
   }
+
+  static async getInvoiceByIdUser(id_user, orderStatus) {
+    try {
+      const result = await Invoice.getInvoiceByIdUser(id_user, orderStatus);
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi tìm hóa đơn của người dùng:", error);
+      throw new Error(`Lỗi khi tìm hóa đơn của người dùng: ${error.message}`);
+    }
+  }
+
+  static async getInvoiceDetailFindByID_Invoice(ID_Invoice) {
+    try {
+      const result = await Invoice.getInvoiceDetailFindByID_Invoice(ID_Invoice);
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi tìm hóa đơn của người dùng:", error);
+      throw new Error(`Lỗi khi tìm hóa đơn của người dùng: ${error.message}`);
+    }
+  }
 }
 
 export default InvoiceService;

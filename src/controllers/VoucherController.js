@@ -2,8 +2,21 @@ import VoucherService from "~/services/VoucherService";
 
 class VoucherController {
   static async getAllVouchers(req, res) {
+    const id_user = req.params.id;
+    console.log("data id user controller: ", id_user);
     try {
-      const vouchers = await VoucherService.getAllVouchers();
+      const vouchers = await VoucherService.getAllVouchers(id_user);
+      res.status(200).json(vouchers);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async GetVouchersSaveByUserID(req, res) {
+    const id_user = req.params.id;
+    console.log("data id user controller: ", id_user);
+    try {
+      const vouchers = await VoucherService.GetVouchersSaveByUserID(id_user);
       res.status(200).json(vouchers);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -21,7 +34,17 @@ class VoucherController {
 
   static async addVoucherToUser(req, res) {
     const { ID_User, ID_Voucher } = req.body;
+
     try {
+      const existingVoucher = await VoucherService.findVoucherByUserAndVoucher(
+        ID_User,
+        ID_Voucher
+      );
+
+      if (existingVoucher) {
+        return res.status(400).json({ message: "Voucher đã được thêm rồi." });
+      }
+
       const newVoucher = await VoucherService.addVoucherToUser(
         ID_User,
         ID_Voucher

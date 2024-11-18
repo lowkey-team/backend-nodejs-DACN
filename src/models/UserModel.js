@@ -72,6 +72,12 @@ class User {
       user: { id: user.id, FullName: user.FullName, Phone: user.Phone },
     };
   }
+
+  static async findById(id) {
+    const db = GET_DB();
+    const [rows] = await db.query("SELECT * FROM Users WHERE id =?", [id]);
+    return rows[0];
+  }
 }
 
 export default User;

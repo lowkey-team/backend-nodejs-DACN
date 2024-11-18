@@ -91,7 +91,6 @@ class Invoice {
       console.log("Kết thúc giao dịch.");
     }
   }
-
   static async updateInvoice(invoiceData) {
     const {
       invoiceId,
@@ -168,6 +167,20 @@ class Invoice {
       connection.release();
       console.log("Kết thúc giao dịch.");
     }
+  }
+  static async getInvoiceByIdUser(id_user, orderStatus) {
+    const db = GET_DB();
+    const [rows] = await db.query("CALL GetInvoicesByUserAndStatus(?, ?)", [
+      id_user,
+      orderStatus,
+    ]);
+    return rows[0];
+  }
+
+  static async getInvoiceDetailFindByID_Invoice(ID_Invoice) {
+    const db = GET_DB();
+    const [rows] = await db.query("call GetInvoiceDetails(?)", [ID_Invoice]);
+    return rows[0];
   }
 }
 
