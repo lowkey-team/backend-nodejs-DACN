@@ -26,16 +26,15 @@ class Invoice {
     try {
       console.log("Bắt đầu giao dịch tạo hóa đơn...", invoiceData);
 
-      // Bắt đầu giao dịch
       await connection.beginTransaction();
 
       // Thực hiện query để thêm dữ liệu vào bảng Invoice
-      const [invoiceResult] = await connection.query(
+      await connection.query(
         `INSERT INTO Invoice 
           (ID_Employeer, ID_User, totalAmount, discountAmount, finalAmount, voucherCode, 
           paymentStatus, paymentMethod, orderStatus, note, receivedDate, 
           shippingAddress, phoneNumber, customerName) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
         [
           employeerId,
           userId,
@@ -54,11 +53,20 @@ class Invoice {
         ]
       );
 
-      console.log("Hóa đơn đã được tạo, ID:", invoiceResult.insertId);
-      const invoiceId = invoiceResult.insertId;
+      // Lấy ID hóa đơn vừa tạo bằng cách sử dụng một query SELECT
+      const [invoiceIdResult] = await connection.query(
+        `SELECT invoice_id FROM invoice 
+         WHERE ID_User = ? AND receivedDate = ? 
+         ORDER BY createdAt DESC LIMIT 1`,
+        [userId, receivedDate]
+      );
+
+      const createdInvoiceId = invoiceIdResult[0].invoice_id;
+
+      console.log("Hóa đơn đã được tạo, ID:", createdInvoiceId);
 
       const invoiceDetails = items.map((item) => [
-        invoiceId,
+        createdInvoiceId,
         item.productVariationId,
         item.unitPrice,
         item.amount,
@@ -75,22 +83,24 @@ class Invoice {
 
       console.log("Chi tiết hóa đơn đã được thêm thành công.");
 
+      // Commit giao dịch
       await connection.commit();
       console.log("Giao dịch đã hoàn thành.");
 
       return {
         message: "Tạo hóa đơn và chi tiết hóa đơn thành công.",
-        invoiceId,
+        invoiceId: createdInvoiceId, // Trả về ID của hóa đơn vừa tạo
       };
     } catch (error) {
       await connection.rollback();
       console.error("Lỗi khi tạo hóa đơn:", error.message);
-      throw new Error(`Lỗi khi tạo hóa đơn : ${error.message}`);
+      throw new Error(`Lỗi khi tạo hóa đơn: ${error.message}`);
     } finally {
       connection.release();
       console.log("Kết thúc giao dịch.");
     }
   }
+
   static async updateInvoice(invoiceData) {
     const {
       invoiceId,
@@ -144,7 +154,7 @@ class Invoice {
 
       const query = `UPDATE Invoice 
                      SET ${updateFields.join(", ")} 
-                     WHERE ID = ?`;
+                     WHERE invoice_id = ?`;
 
       updateValues.push(invoiceId);
 
