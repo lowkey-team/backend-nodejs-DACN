@@ -11,6 +11,7 @@ import { InvoiceRoute } from "./InvoiceRouter";
 import { paymentRoute } from "./paymentRoute";
 import { VoucherRouter } from "./VoucherRouter";
 import { feedbackRouter } from "./Feedbackrouter";
+import { emailRouter } from "./EmailRouter";
 
 const Router = express.Router();
 
@@ -26,5 +27,6 @@ Router.use("/invoices", InvoiceRoute);
 Router.use("/", paymentRoute);
 Router.use("/voucher", VoucherRouter);
 Router.use("/feedback", feedbackRouter);
+Router.use("/email", emailRouter);
 
 export const APIs_V1 = Router;

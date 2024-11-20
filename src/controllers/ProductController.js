@@ -88,6 +88,16 @@ class ProductController {
       res.status(500).json({ message: err.message });
     }
   }
+
+  static async GetProductsBySupCategory(req, res) {
+    const { id } = req.params;
+    try {
+      const product = await ProductService.GetProductsBySupCategory(id);
+      res.status(200).json(product);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 export default ProductController;

@@ -297,45 +297,70 @@ class Product {
     const db = GET_DB();
     const [rows] = await db.query(
       `
-            SELECT 
-          p.id AS product_id,
-          p.productName,
-          p.description,
-          sc.SupCategoryName AS subcategory_name,
-          c.categoryName AS category_name,
-          (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-              'image_id', img.id,
-              'image_url', img.IMG_URL
-          )) 
-          FROM productImage img 
-          WHERE img.ProductID = p.id) AS images,
-          JSON_ARRAYAGG(JSON_OBJECT(
-              'variation_id', pv.id,
-              'size', pv.size,
-              'price', pv.Price,
-              'stock', pv.stock,
-              'isDelete', pv.isDelete
-          )) AS variations,
-          MIN(pv.Price) AS min_price,  
-          MAX(pv.Price) AS max_price  
-      FROM 
-          Product p
-      LEFT JOIN 
-          SupCategory sc ON p.ID_SupCategory = sc.id
-      LEFT JOIN 
-          category c ON sc.categoryId = c.id
-      LEFT JOIN 
-          productVariation pv ON p.id = pv.ID_Product
-      WHERE
-          p.isDelete = 0 AND p.id = ?
-      GROUP BY 
-          p.id, p.productName, p.description, sc.SupCategoryName, c.categoryName;
+      SELECT 
+        p.id AS product_id,
+        p.productName,
+        p.description,
+        sc.SupCategoryName AS subcategory_name,
+        c.categoryName AS category_name,
+        (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+            'image_id', img.id,
+            'image_url', img.IMG_URL
+        )) 
+        FROM productImage img 
+        WHERE img.ProductID = p.id) AS images,
+        JSON_ARRAYAGG(JSON_OBJECT(
+            'variation_id', pv.id,
+            'size', pv.size,
+            'price', pv.Price,
+            'stock', pv.stock,
+            'discount_percentage', IFNULL(d.discount, 0),
+            'final_price', pv.Price - (pv.Price * IFNULL(d.discount, 0) / 100),
+            'isDelete', pv.isDelete
+        )) AS variations,
+        MIN(pv.Price - (pv.Price * IFNULL(d.discount, 0) / 100)) AS min_price,
+        MAX(pv.Price - (pv.Price * IFNULL(d.discount, 0) / 100)) AS max_price
+    FROM 
+        Product p
+    LEFT JOIN 
+        SupCategory sc ON p.ID_SupCategory = sc.id
+    LEFT JOIN 
+        category c ON sc.categoryId = c.id
+    LEFT JOIN 
+        productVariation pv ON p.id = pv.ID_Product
+    LEFT JOIN 
+        variation_discount vd ON pv.id = vd.ID_Variation
+    LEFT JOIN 
+        discount d ON vd.ID_Discount = d.id
+    WHERE
+        p.isDelete = 0 AND p.id = ?
+    GROUP BY 
+        p.id, p.productName, p.description, sc.SupCategoryName, c.categoryName;
+
 
     `,
       [productId]
     );
 
     return rows[0] || null;
+  }
+
+  static async GetProductsBySupCategory(supcategoryId) {
+    const db = GET_DB();
+
+    try {
+      const [rows] = await db.query(
+        `
+        CALL GetProductsBySupCategory(?);
+        `,
+        [supcategoryId]
+      );
+
+      return rows[0] || null;
+    } catch (error) {
+      console.error("Error while getting products by supcategory:", error);
+      throw error;
+    }
   }
 }
 

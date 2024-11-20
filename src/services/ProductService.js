@@ -100,6 +100,14 @@ class ProductService {
 
     return result;
   }
+
+  static async GetProductsBySupCategory(id) {
+    const product = await Product.GetProductsBySupCategory(id);
+    if (!product) {
+      throw new Error("Sản phẩm không tồn tại");
+    }
+    return product;
+  }
 }
 
 export default ProductService;

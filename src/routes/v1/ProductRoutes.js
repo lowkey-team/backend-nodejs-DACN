@@ -24,5 +24,7 @@ Router.route("/:id")
     ProductController.updateProduct
   )
   .delete(ProductController.deleteProduct);
-
+Router.route("/getProductBySup/:id").get(
+  ProductController.GetProductsBySupCategory
+);
 export const productRoutes = Router;
