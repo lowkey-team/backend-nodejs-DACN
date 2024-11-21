@@ -55,6 +55,21 @@ class UserService {
   static async findById(id) {
     return await User.findById(id);
   }
+  static async findByEmail(email) {
+    return await User.findByEmail(email);
+  }
+  static async updatePasswordByEmail(email, password) {
+    const user = await User.findByEmail(email);
+    if (!user) {
+      throw new Error("Người dùng với email này không tồn tại.");
+    }
+
+    const result = await User.updatePasswordByEmail(email, password);
+    if (!result.success) {
+      throw new Error(result.message || "Không thể cập nhật mật khẩu.");
+    }
+    return result;
+  }
 }
 
 export default UserService;

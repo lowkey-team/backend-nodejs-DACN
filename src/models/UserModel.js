@@ -29,7 +29,7 @@ class User {
       "SELECT * FROM Users WHERE Email = ? AND isDelete = 0",
       [Email]
     );
-    return rows[0];
+    return rows.length > 0;
   }
 
   static async create(userData) {
@@ -77,6 +77,22 @@ class User {
     const db = GET_DB();
     const [rows] = await db.query("SELECT * FROM Users WHERE id =?", [id]);
     return rows[0];
+  }
+
+  static async updatePasswordByEmail(Email, newPassword) {
+    const db = GET_DB();
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const [result] = await db.query(
+      "UPDATE Users SET Passwords = ?, updatedAt = NOW() WHERE Email = ? AND isDelete = 0",
+      [hashedPassword, Email]
+    );
+
+    if (result.affectedRows > 0) {
+      return { success: true, message: "Password updated successfully" };
+    } else {
+      return { success: false, message: "User not found or email invalid" };
+    }
   }
 }
 
