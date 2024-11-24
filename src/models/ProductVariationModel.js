@@ -1,4 +1,5 @@
 import { GET_DB } from "~/config/mysql";
+const crypto = require("crypto");
 
 class ProductVariation {
   static async getAll() {
@@ -11,6 +12,7 @@ class ProductVariation {
 
   static async updateMultiple(variations) {
     const db = GET_DB();
+    console.log("database update variation model", variations);
     const updatePromises = variations.map(async (variation) => {
       const { id, size, Price, stock, isDelete } = variation;
       const existingVariation = await ProductVariation.findById(id);
@@ -32,13 +34,18 @@ class ProductVariation {
   }
 
   static async create(variationData) {
-    const { ID_Product, size, Price, stock } = variationData;
+    const { ID_Product, categoryCode, size, Price, stock } = variationData;
     const db = GET_DB();
+
+    const randomString = crypto.randomBytes(5).toString("hex");
+    const id = `${ID_Product}${categoryCode}${randomString}`;
+
     const [result] = await db.query(
-      "INSERT INTO productVariation (ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
-      [ID_Product, size, Price, stock, 0]
+      "INSERT INTO productVariation (id, ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())",
+      [id, ID_Product, size, Price, stock, 0]
     );
-    return { id: result.insertId, ...variationData };
+
+    return { id, ...variationData };
   }
 
   static async update(id, variationData) {
@@ -72,22 +79,39 @@ class ProductVariation {
   static async createMultiple(variations) {
     const db = GET_DB();
 
-    const values = variations.map((variation) => [
-      variation.ID_Product,
-      variation.size,
-      variation.Price,
-      variation.stock,
-      0,
-      new Date(),
-      new Date(),
-    ]);
+    if (!Array.isArray(variations) || variations.length === 0) {
+      throw new Error("Danh sách biến thể không hợp lệ hoặc rỗng.");
+    }
 
-    const [result] = await db.query(
-      `INSERT INTO productVariation (ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES ?`,
-      [values]
-    );
+    try {
+      const values = variations.map((variation) => {
+        const randomString = crypto.randomBytes(5).toString("hex");
+        const id = `${variation.ID_Product}${randomString}`;
+        return [
+          id,
+          variation.ID_Product,
+          variation.size,
+          variation.Price,
+          variation.stock,
+          0,
+          new Date(),
+          new Date(),
+        ];
+      });
 
-    return result;
+      const [result] = await db.query(
+        `INSERT INTO productVariation (id, ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES ?`,
+        [values]
+      );
+
+      return {
+        message: "Thêm nhiều biến thể thành công",
+        affectedRows: result.affectedRows,
+      };
+    } catch (error) {
+      console.error("Lỗi khi thêm nhiều biến thể sản phẩm:", error);
+      throw new Error("Không thể thêm nhiều biến thể sản phẩm.");
+    }
   }
 }
 

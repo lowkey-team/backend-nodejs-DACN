@@ -55,12 +55,28 @@ class ProductController {
     }
   }
 
+  static async createProductExcel(req, res) {
+    console.log("Body in Controller:", JSON.stringify(req.body, null, 2));
+
+    try {
+      const newProduct = await ProductService.createProductExcel(req.body);
+      res.status(201).json(newProduct);
+    } catch (err) {
+      console.log("upload failed controller error: " + err);
+      res.status(500).json({ message: err.message });
+    }
+  }
   static async updateProduct(req, res) {
     const { id } = req.params;
+    console.log("Request ID:", id);
+    console.log("Request body:", req.body);
+
     try {
       const updatedProduct = await ProductService.updateProduct(id, req.body);
+      console.log("Updated product result:", updatedProduct);
       res.status(200).json(updatedProduct);
     } catch (err) {
+      console.error("Error updating product:", err.message);
       res.status(500).json({ message: err.message });
     }
   }

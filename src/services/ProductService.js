@@ -38,26 +38,8 @@ class ProductService {
     return await Product.create(productData);
   }
 
-  static async updateProduct(id, productData, files) {
-    const product = await Product.findById(id);
-    if (!product) {
-      throw new Error("Sản phẩm không tồn tại");
-    }
-
-    if (files && files.length > 0) {
-      const imageUrls = [];
-      for (const file of files) {
-        try {
-          const result = await cloudinary.v2.uploader.upload(file.path);
-          imageUrls.push(result.secure_url);
-          fs.unlinkSync(file.path);
-        } catch (error) {
-          console.error("Lỗi khi upload hình ảnh lên Cloudinary:", error);
-        }
-      }
-      productData.images = imageUrls;
-    }
-
+  static async updateProduct(id, productData) {
+    console.log("data service product", id, productData);
     return await Product.update(id, productData);
   }
 
@@ -107,6 +89,10 @@ class ProductService {
       throw new Error("Sản phẩm không tồn tại");
     }
     return product;
+  }
+
+  static async createProductExcel(productData) {
+    return await Product.createProductExcel(productData);
   }
 }
 

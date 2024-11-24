@@ -1,7 +1,7 @@
 import { GET_DB } from "~/config/mysql";
+const crypto = require("crypto");
 
 class Product {
-  // Lấy tất cả sản phẩm theo top 1 image - discount - category - productVariation price  min max
   static async getAllProduct() {
     const db = GET_DB();
     const [rows] = await db.query(`
@@ -187,19 +187,21 @@ class Product {
     return rows;
   }
   static async create(productData) {
-    const { ID_SupCategory, productName, description, images, variations } =
+    const { ID_SupCategory, productName, description, images, variants } =
       productData;
     const db = GET_DB();
 
     try {
       await db.query("START TRANSACTION");
 
-      const [productResult] = await db.query(
-        "INSERT INTO Product (ID_SupCategory, productName, description, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, 0, NOW(), NOW())",
-        [ID_SupCategory, productName, description]
-      );
+      const randomString = crypto.randomBytes(5).toString("hex");
 
-      const productId = productResult.insertId;
+      const productId = `${ID_SupCategory}${randomString}`;
+
+      const [productResult] = await db.query(
+        "INSERT INTO Product (id, ID_SupCategory, productName, description, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())",
+        [productId, ID_SupCategory, productName, description]
+      );
 
       if (images && images.length > 0) {
         for (const image of images) {
@@ -210,11 +212,21 @@ class Product {
         }
       }
 
-      if (variations && variations.length > 0) {
-        for (const variation of variations) {
+      if (variants && variants.length > 0) {
+        for (const variation of variants) {
+          const variationRandomString = crypto.randomBytes(5).toString("hex");
+          const variationId = `${productId}${variationRandomString}`;
+
+          const stock = Number(variation.Stock);
+          const price = Number(variation.Price);
+
+          if (isNaN(stock) || isNaN(price)) {
+            throw new Error("Stock hoặc Price không hợp lệ.");
+          }
+
           await db.query(
-            "INSERT INTO productVariation (ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())",
-            [productId, variation.size, variation.Price, variation.stock]
+            "INSERT INTO productVariation (id, ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())",
+            [variationId, productId, variation.VariantName, price, stock]
           );
         }
       }
@@ -234,9 +246,71 @@ class Product {
     }
   }
 
+  static async createProductExcel(productsData) {
+    const db = GET_DB();
+
+    try {
+      await db.query("START TRANSACTION");
+
+      for (const productData of productsData) {
+        const { ID_SupCategory, productName, description, images, variants } =
+          productData;
+
+        const randomString = crypto.randomBytes(5).toString("hex");
+        const productId = `${ID_SupCategory}${randomString}`;
+
+        const [productResult] = await db.query(
+          "INSERT INTO Product (id, ID_SupCategory, productName, description, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())",
+          [productId, ID_SupCategory, productName, description]
+        );
+
+        if (images && images.length > 0) {
+          for (const image of images) {
+            await db.query(
+              "INSERT INTO ProductImage (ProductID, IMG_URL) VALUES (?, ?)",
+              [productId, image]
+            );
+          }
+        }
+
+        if (variants && variants.length > 0) {
+          for (const variation of variants) {
+            const variationRandomString = crypto.randomBytes(5).toString("hex");
+            const variationId = `${productId}${variationRandomString}`;
+
+            const stock = Number(variation.stock);
+            const price = Number(variation.Price);
+
+            if (isNaN(stock) || isNaN(price)) {
+              throw new Error("Stock hoặc Price không hợp lệ.");
+            }
+
+            await db.query(
+              "INSERT INTO productVariation (id, ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())",
+              [variationId, productId, variation.size, price, stock]
+            );
+          }
+        }
+      }
+
+      await db.query("COMMIT");
+
+      return { message: "Products added successfully." };
+    } catch (error) {
+      await db.query("ROLLBACK");
+
+      if (error.message.includes("Lock wait timeout exceeded")) {
+        console.error("Lock wait timeout, please try again later.");
+        throw new Error("Lock wait timeout, please try again later.");
+      } else {
+        throw error;
+      }
+    }
+  }
+
   static async update(id, productData) {
-    const { ID_SupCategory, productName, description, images, variations } =
-      productData;
+    console.log("update", id, productData);
+    const { ID_SupCategory, productName, description } = productData;
     const db = GET_DB();
 
     try {
@@ -247,35 +321,9 @@ class Product {
         [ID_SupCategory, productName, description, id]
       );
 
-      if (images && images.length > 0) {
-        await db.query("DELETE FROM ProductImage WHERE ProductID = ?", [id]);
-
-        const imagePromises = images.map((image) => {
-          return db.query(
-            "INSERT INTO ProductImage (ProductID, IMG_URL, createdAt) VALUES (?, ?, NOW())",
-            [id, image]
-          );
-        });
-        await Promise.all(imagePromises);
-      }
-
-      if (variations && variations.length > 0) {
-        await db.query("DELETE FROM productVariation WHERE ID_Product = ?", [
-          id,
-        ]);
-
-        const variationPromises = variations.map((variation) => {
-          return db.query(
-            "INSERT INTO productVariation (ID_Product, size, Price, stock, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())",
-            [id, variation.size, variation.Price, variation.stock]
-          );
-        });
-        await Promise.all(variationPromises);
-      }
-
       await db.query("COMMIT");
 
-      return { id, ...productData };
+      return { id, ID_SupCategory, productName, description };
     } catch (error) {
       await db.query("ROLLBACK");
 
