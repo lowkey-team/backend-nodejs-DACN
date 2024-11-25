@@ -193,9 +193,32 @@ class Invoice {
     return rows[0];
   }
 
+  static async getInvoiceDetailListFindByID(ID_Invoice) {
+    const db = GET_DB();
+    const [rows] = await db.query("call GetInvoiceDetailList(?)", [ID_Invoice]);
+    return rows[0];
+  }
+
   static async getInvoiceAll() {
     const db = GET_DB();
-    const [rows] = await db.query("SELECT * FROM invoice");
+
+    const query = `
+      SELECT 
+        u.FullName AS customerName, 
+        u.Phone AS customerPhone, 
+        u.email AS customerEmail,
+        e.FullName AS employeeName,
+        e.Phone AS employeePhone,
+        i.*
+      FROM 
+        invoice i
+      LEFT JOIN 
+        users u ON i.ID_User = u.id
+      LEFT JOIN 
+        employees e ON i.ID_Employeer = e.id;
+    `;
+
+    const [rows] = await db.query(query);
     return rows;
   }
 }

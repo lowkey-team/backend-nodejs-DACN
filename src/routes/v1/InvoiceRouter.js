@@ -15,5 +15,9 @@ router.get(
   "/detail/:ID_Invoice",
   InvoiceController.getInvoiceDetailFindByID_Invoice
 );
+router.get(
+  "/detailInvoiceList/:ID_Invoice",
+  InvoiceController.getInvoiceDetailListFindByID
+);
 
 export const InvoiceRoute = router;

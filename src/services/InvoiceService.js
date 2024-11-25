@@ -49,6 +49,16 @@ class InvoiceService {
       throw new Error(`Lỗi khi tìm hóa đơn của người dùng: ${error.message}`);
     }
   }
+
+  static async getInvoiceDetailListFindByID(ID_Invoice) {
+    try {
+      const result = await Invoice.getInvoiceDetailListFindByID(ID_Invoice);
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi tìm hóa đơn của người dùng:", error);
+      throw new Error(`Lỗi khi tìm hóa đơn của người dùng: ${error.message}`);
+    }
+  }
 }
 
 export default InvoiceService;
