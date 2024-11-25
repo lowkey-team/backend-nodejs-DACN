@@ -192,6 +192,12 @@ class Invoice {
     const [rows] = await db.query("call GetInvoiceDetails(?)", [ID_Invoice]);
     return rows[0];
   }
+
+  static async getInvoiceAll() {
+    const db = GET_DB();
+    const [rows] = await db.query("SELECT * FROM invoice");
+    return rows;
+  }
 }
 
 export default Invoice;

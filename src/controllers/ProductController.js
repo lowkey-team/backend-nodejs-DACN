@@ -19,6 +19,15 @@ class ProductController {
     }
   }
 
+  static async getProductAllPage(req, res) {
+    try {
+      const products = await ProductService.getProductAllPage(req.query);
+      res.status(200).json(products);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
   static async getTop10NewestProducts(req, res, next) {
     try {
       const products = await ProductService.getTop10NewestProducts(req.query);

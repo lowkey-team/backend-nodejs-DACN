@@ -71,6 +71,18 @@ class InvoiceController {
     }
   }
 
+  static async getInvoiceAll(req, res) {
+    try {
+      const result = await InvoiceService.getInvoiceAll();
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Lỗi khi tìm hóa đơn của người dùng:", error);
+      res.status(500).json({
+        message: `Lỗi khi tìm hóa đơn của người dùng: ${error.message}`,
+      });
+    }
+  }
+
   static async getInvoiceDetailFindByID_Invoice(req, res) {
     try {
       const { ID_Invoice } = req.params;

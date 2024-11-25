@@ -12,6 +12,7 @@ Router.route("/")
 Router.route("/products").post(ProductController.createProductExcel);
 
 Router.route("/getAll").get(ProductController.getAll);
+Router.route("/getAllProductPage").get(ProductController.getProductAllPage);
 Router.route("/getTop10").get(ProductController.getTop10NewestProducts);
 Router.route("/getSortByCategory").get(
   ProductController.getAllProductsSortedByCategory

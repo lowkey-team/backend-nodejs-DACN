@@ -11,6 +11,9 @@ class ProductService {
   static async getAll() {
     return await Product.getAll();
   }
+  static async getProductAllPage() {
+    return await Product.getProductAllPage();
+  }
 
   static async getTop10NewestProducts() {
     return await Product.getTop10NewestProducts();

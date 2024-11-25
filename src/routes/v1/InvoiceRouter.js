@@ -9,6 +9,8 @@ router.get(
   "/invoices/:id_user/:orderStatus",
   InvoiceController.getInvoiceByIdUser
 );
+
+router.get("/invoicesAll", InvoiceController.getInvoiceAll);
 router.get(
   "/detail/:ID_Invoice",
   InvoiceController.getInvoiceDetailFindByID_Invoice

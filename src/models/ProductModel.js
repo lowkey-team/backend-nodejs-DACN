@@ -132,6 +132,12 @@ class Product {
     `);
     return rows;
   }
+  static async getProductAllPage() {
+    const db = GET_DB();
+    const [rows] = await db.query(`call GetRankedProductVariations();
+    `);
+    return rows[0];
+  }
 
   static async getAllProductsSortedByCategory() {
     const db = GET_DB();
