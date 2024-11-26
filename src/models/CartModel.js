@@ -74,6 +74,19 @@ class Cart {
     return rows;
   }
 
+  static async GetTotalProductVariationsByUser(userId) {
+    const db = GET_DB();
+    const [rows] = await db.query(
+      `
+        call GetTotalProductVariationsByUser(?);
+      `,
+      [userId]
+    );
+
+    const totalVariations = rows[0][0]?.total_variations || 0;
+    return totalVariations;
+  }
+
   static async updateProductQuantity(cartId, quantity) {
     const db = GET_DB();
 

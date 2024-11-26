@@ -15,6 +15,11 @@ class CartService {
     return cartItems;
   }
 
+  static async GetTotalProductVariationsByUser(userId) {
+    const cartItems = await Cart.GetTotalProductVariationsByUser(userId);
+    return cartItems;
+  }
+
   static async deleteCartById(cartId) {
     const result = await Cart.deleteCartById(cartId);
     if (result === 0) {

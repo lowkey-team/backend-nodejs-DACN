@@ -37,6 +37,21 @@ class CartController {
     }
   }
 
+  static async GetTotalProductVariationsByUser(req, res) {
+    try {
+      const userId = req.params.userId;
+      if (!userId) {
+        return res.status(400).json({ message: "ID người dùng không hợp lệ" });
+      }
+      const cartItems = await CartService.GetTotalProductVariationsByUser(
+        userId
+      );
+      return res.status(200).json(cartItems);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
   static async deleteCartById(req, res) {
     try {
       const { cartId } = req.params;
