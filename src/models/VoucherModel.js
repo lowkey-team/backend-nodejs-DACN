@@ -1,6 +1,18 @@
 import { GET_DB } from "~/config/mysql";
 
 class Voucher {
+  static async getAllVoucherAdmin() {
+    const db = GET_DB();
+    try {
+      const [rows] = await db.query(`CALL GetUnusedVouchersByUser(?);`);
+
+      return rows[0];
+    } catch (error) {
+      console.error("Error fetching unused vouchers:", error);
+      throw error;
+    }
+  }
+
   static async getAll(id_user) {
     console.log("voucher nugoi dung", id_user);
     const db = GET_DB();

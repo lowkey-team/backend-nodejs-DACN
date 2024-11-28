@@ -15,6 +15,7 @@ import { emailRouter } from "./EmailRouter";
 import { ghnRouter } from "./ghnRoutes";
 import { SupplierRouter } from "./SupplierRouter";
 import { OrderSupplierRouters } from "./ordersupplierRouter";
+import { DiscountRouter } from "./discountRouter";
 
 const Router = express.Router();
 
@@ -34,5 +35,6 @@ Router.use("/email", emailRouter);
 Router.use("/ngh", ghnRouter);
 Router.use("/supplier", SupplierRouter);
 Router.use("/orderSupplier", OrderSupplierRouters);
+Router.use("/discount", DiscountRouter);
 
 export const APIs_V1 = Router;
