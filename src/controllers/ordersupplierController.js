@@ -10,5 +10,17 @@ class orderSupplierController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  static async getOrderSupplierAll(req, res) {
+    try {
+      const result = await OrderSupplierService.getOrderSupplierAll();
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Lỗi khi tìm hóa đơn của người dùng:", error);
+      res.status(500).json({
+        message: `Lỗi khi tìm hóa đơn của người dùng: ${error.message}`,
+      });
+    }
+  }
 }
 export default orderSupplierController;

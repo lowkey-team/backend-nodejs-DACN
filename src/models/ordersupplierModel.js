@@ -87,6 +87,30 @@ class OrderModel {
       console.log("Kết thúc giao dịch.");
     }
   }
+
+  static async getOrderSupplierAll() {
+    const db = GET_DB();
+
+    const query = `
+      SELECT 
+          os.*, 
+          e.FullName AS employee_name,
+          e.Phone AS employee_phone,
+          s.SupplierName AS supplier_name,
+          s.PhoneNumber AS supplier_phone,
+          s.Address AS supplier_address
+      FROM ordersupplier os
+      JOIN employees e ON os.ID_Employeer = e.id
+      JOIN supplier s ON os.ID_Supplier = s.id
+      WHERE e.isDelete = 0 
+        AND s.isDelete = 0
+      LIMIT 0, 1000;
+
+    `;
+
+    const [rows] = await db.query(query);
+    return rows;
+  }
 }
 
 export default OrderModel;
