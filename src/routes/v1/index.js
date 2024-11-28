@@ -13,6 +13,7 @@ import { VoucherRouter } from "./VoucherRouter";
 import { feedbackRouter } from "./Feedbackrouter";
 import { emailRouter } from "./EmailRouter";
 import { ghnRouter } from "./ghnRoutes";
+import { SupplierRouter } from "./SupplierRouter";
 
 const Router = express.Router();
 
@@ -30,5 +31,6 @@ Router.use("/voucher", VoucherRouter);
 Router.use("/feedback", feedbackRouter);
 Router.use("/email", emailRouter);
 Router.use("/ngh", ghnRouter);
+Router.use("/supplier", SupplierRouter);
 
 export const APIs_V1 = Router;
