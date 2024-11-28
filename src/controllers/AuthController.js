@@ -1,35 +1,38 @@
-import AuthService from "~/services/AuthService";
+import jwt from "jsonwebtoken";
+import { GET_DB } from "~/config/mysql";
 
-class AuthController {
-  static async login(req, res) {
-    const { phone, password } = req.body;
-    try {
-      const result = await AuthService.login(phone, password);
-      return res.status(200).json(result);
-    } catch (error) {
-      return res.status(400).json({ message: error.message });
+const login = async (req, res) => {
+  const { phone, password } = req.body;
+
+  try {
+    const db = await GET_DB();
+
+    const [results] = await db.query(
+      "SELECT * FROM employees WHERE Phone = ? AND Passwords = ?",
+      [phone, password]
+    );
+
+    if (results.length === 0) {
+      return res.status(401).send({ message: "Invalid credentials" });
     }
-  }
 
-  static async verifyToken(req, res) {
-    const { token } = req.body;
-    try {
-      const decoded = AuthService.verifyToken(token);
-      return res.status(200).json({ decoded });
-    } catch (error) {
-      return res.status(400).json({ message: error.message });
-    }
-  }
+    const user = results[0];
 
-  static async logout(req, res) {
-    try {
-      const userId = req.user.id;
-      const logoutResponse = await AuthService.logout(userId);
-      res.status(200).json(logoutResponse);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-}
+    const token = jwt.sign(
+      { id: user.id, fullName: user.fullName },
+      "your_secret_key",
+      { expiresIn: "1h" }
+    );
 
-export default AuthController;
+    res.send({
+      token,
+      id: user.id,
+      fullName: user.FullName,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: "Database error" });
+  }
+};
+
+export { login };

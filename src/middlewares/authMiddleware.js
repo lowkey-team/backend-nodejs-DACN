@@ -1,18 +1,44 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import { GET_DB } from "~/config/mysql";
 
-export const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
+const checkPermission = (permission) => {
+  return async (req, res, next) => {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) {
-        return res.status(401).json({ message: "Token không tồn tại" }); 
+      return res.status(401).send({ message: "No token provided" });
     }
 
-    jwt.verify(token, 'secretKey', (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: "Token không hợp lệ" }); 
-        }
-        req.user = user; 
-        next(); 
-    });
+    try {
+      const decoded = jwt.verify(token, "your_secret_key");
+      req.user = decoded;
+
+      const employeeId = req.user.id;
+      const db = await GET_DB();
+
+      const [results] = await db.query(
+        `
+        SELECT p.name AS permission
+        FROM employees e
+        JOIN employee_roles er ON e.id = er.employee_id
+        JOIN role_permissions rp ON er.role_id = rp.role_id
+        JOIN permissions p ON rp.permission_id = p.id
+        WHERE e.id = ?
+        `,
+        [employeeId]
+      );
+
+      const permissions = results.map((row) => row.permission);
+
+      if (!permissions.includes(permission)) {
+        return res.status(403).send({ message: "Access denied" });
+      }
+
+      next();
+    } catch (error) {
+      console.error(error);
+      res.status(401).send({ message: "Invalid token" });
+    }
+  };
 };
+
+export { checkPermission };
