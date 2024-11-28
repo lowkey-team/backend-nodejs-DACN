@@ -14,6 +14,7 @@ import { feedbackRouter } from "./Feedbackrouter";
 import { emailRouter } from "./EmailRouter";
 import { ghnRouter } from "./ghnRoutes";
 import { SupplierRouter } from "./SupplierRouter";
+import { OrderSupplierRouters } from "./ordersupplierRouter";
 
 const Router = express.Router();
 
@@ -32,5 +33,6 @@ Router.use("/feedback", feedbackRouter);
 Router.use("/email", emailRouter);
 Router.use("/ngh", ghnRouter);
 Router.use("/supplier", SupplierRouter);
+Router.use("/orderSupplier", OrderSupplierRouters);
 
 export const APIs_V1 = Router;
