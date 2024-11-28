@@ -16,6 +16,7 @@ import { ghnRouter } from "./ghnRoutes";
 import { SupplierRouter } from "./SupplierRouter";
 import { OrderSupplierRouters } from "./ordersupplierRouter";
 import { DiscountRouter } from "./discountRouter";
+import { VariationDiscountRouter } from "./variationDiscountRouter";
 
 const Router = express.Router();
 
@@ -36,5 +37,6 @@ Router.use("/ngh", ghnRouter);
 Router.use("/supplier", SupplierRouter);
 Router.use("/orderSupplier", OrderSupplierRouters);
 Router.use("/discount", DiscountRouter);
+Router.use("/VariationDiscountRouter", VariationDiscountRouter);
 
 export const APIs_V1 = Router;

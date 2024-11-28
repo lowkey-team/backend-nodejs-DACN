@@ -23,9 +23,10 @@ class DiscountModel {
   }
 
   static async updateDiscount(id, discount) {
+    console.log("update discount model", id, discount);
     const db = await GET_DB();
     const [result] = await db.query(
-      "UPDATE discount SET discount = ? WHERE id = ?",
+      `UPDATE discount SET discount = ? WHERE id = ?`,
       [discount, id]
     );
     if (result.affectedRows === 0) {
@@ -37,7 +38,7 @@ class DiscountModel {
   static async deleteDiscount(id) {
     const db = await GET_DB();
     const [result] = await db.query("DELETE FROM discount WHERE id = ?", [id]);
-    return result.affectedRows > 0; // Trả về true nếu có bản ghi bị xóa
+    return result.affectedRows > 0;
   }
 }
 
