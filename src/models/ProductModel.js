@@ -416,6 +416,28 @@ class Product {
       throw error;
     }
   }
+
+  static async GetProductsBySupCategory_Admin(supcategoryId) {
+    const db = GET_DB();
+
+    try {
+      const [rows] = await db.query(
+        `
+      SELECT  p.*, pv.*
+        FROM productvariation pv
+        JOIN product p ON pv.ID_Product = p.id
+        JOIN supcategory sc ON p.ID_SupCategory = sc.id
+        WHERE sc.id = ?;
+        `,
+        [supcategoryId]
+      );
+
+      return rows;
+    } catch (error) {
+      console.error("Error while getting products by supcategory:", error);
+      throw error;
+    }
+  }
 }
 
 export default Product;

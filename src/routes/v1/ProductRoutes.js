@@ -26,4 +26,8 @@ Router.route("/:id")
 Router.route("/getProductBySup/:id").get(
   ProductController.GetProductsBySupCategory
 );
+
+Router.route("/getProductBySupAdmin/:id").get(
+  ProductController.GetProductsBySupCategory_Admin
+);
 export const productRoutes = Router;

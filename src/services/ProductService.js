@@ -94,6 +94,14 @@ class ProductService {
     return product;
   }
 
+  static async GetProductsBySupCategory_Admin(id) {
+    const product = await Product.GetProductsBySupCategory_Admin(id);
+    if (!product) {
+      throw new Error("Sản phẩm không tồn tại");
+    }
+    return product;
+  }
+
   static async createProductExcel(productData) {
     return await Product.createProductExcel(productData);
   }
