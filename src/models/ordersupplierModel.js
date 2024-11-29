@@ -111,6 +111,70 @@ class OrderModel {
     const [rows] = await db.query(query);
     return rows;
   }
+
+  static async findByIDOrderSupplier(id) {
+    console.log("id order supplier: ", id);
+    const db = GET_DB();
+
+    try {
+      const [rows] = await db.query(`CALL GetOrderSupplierDetails(?)`, [id]);
+
+      return rows[0];
+    } catch (error) {
+      console.error("Error executing stored procedure:", error);
+      throw error;
+    }
+  }
+
+  static async updateOrderStatus(orderSupplierId, orderStatus, paymentStatus) {
+    const db = GET_DB();
+
+    try {
+      const [result] = await db.query(
+        `UPDATE ordersupplier 
+         SET order_status = ?, payment_status = ?, DateOfReceipt = ? 
+         WHERE orderSupplier_id = ?`,
+        [orderStatus, paymentStatus, new Date(), orderSupplierId]
+      );
+
+      if (result.affectedRows === 0) {
+        throw new Error(`Không tìm thấy đơn hàng với ID: ${orderSupplierId}`);
+      }
+
+      return {
+        message: "Cập nhật trạng thái thành công.",
+        orderSupplierId,
+        orderStatus,
+        paymentStatus,
+      };
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error.message);
+      throw new Error(`Lỗi khi cập nhật trạng thái: ${error.message}`);
+    }
+  }
+
+  static async updateOrderSupplierDetail({
+    id,
+    importQuantity,
+    status,
+    unitPrice,
+  }) {
+    const db = await GET_DB();
+    console.log("id order supplier detail: ", id);
+    try {
+      const [result] = await db.query(
+        `UPDATE ordersupplierdetail 
+         SET ImportQuantity = ?, status = ?, UnitPrice = ?, updatedAt = NOW() 
+         WHERE id = ?`,
+        [importQuantity, status, unitPrice, id]
+      );
+      console.log("Chi tiết đơn hàng cập nhật thành công:", result);
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi cập nhật chi tiết đơn hàng:", error.message);
+      throw new Error(`Lỗi trong Model: ${error.message}`);
+    }
+  }
 }
 
 export default OrderModel;

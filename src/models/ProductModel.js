@@ -423,11 +423,14 @@ class Product {
     try {
       const [rows] = await db.query(
         `
-      SELECT  p.*, pv.*
-        FROM productvariation pv
-        JOIN product p ON pv.ID_Product = p.id
-        JOIN supcategory sc ON p.ID_SupCategory = sc.id
-        WHERE sc.id = ?;
+      SELECT p.id, p.productName,
+            MIN(pi.IMG_URL) AS IMG_URL
+      FROM productvariation pv
+      JOIN product p ON pv.ID_Product = p.id
+      LEFT JOIN supcategory sc ON p.ID_SupCategory = sc.id
+      LEFT JOIN productimage pi ON pi.ProductID = p.id
+      WHERE sc.id = ?
+      GROUP BY p.productName , p.id;
         `,
         [supcategoryId]
       );
