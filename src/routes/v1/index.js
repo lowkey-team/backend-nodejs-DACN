@@ -18,6 +18,8 @@ import { OrderSupplierRouters } from "./ordersupplierRouter";
 import { DiscountRouter } from "./discountRouter";
 import { VariationDiscountRouter } from "./variationDiscountRouter";
 
+import { CustomerRoute } from "./CustomerRouter";
+
 const Router = express.Router();
 
 Router.use("/user", userRoutes);
@@ -38,5 +40,7 @@ Router.use("/supplier", SupplierRouter);
 Router.use("/orderSupplier", OrderSupplierRouters);
 Router.use("/discount", DiscountRouter);
 Router.use("/VariationDiscountRouter", VariationDiscountRouter);
+
+Router.use("/customer", CustomerRoute);
 
 export const APIs_V1 = Router;
