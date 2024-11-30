@@ -175,6 +175,19 @@ class OrderModel {
       throw new Error(`Lỗi trong Model: ${error.message}`);
     }
   }
+
+  static async UpdateTotalPriceOrderSupplier(id) {
+    const db = await GET_DB();
+    console.log("id order supplier detail: ", id);
+    try {
+      const [result] = await db.query(`call UpdateTotalPrice(?)`, [id]);
+      console.log("Chi tiết đơn hàng cập nhật thành công:", result);
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi cập nhật chi tiết đơn hàng:", error.message);
+      throw new Error(`Lỗi trong Model: ${error.message}`);
+    }
+  }
 }
 
 export default OrderModel;

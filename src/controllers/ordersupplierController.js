@@ -74,5 +74,26 @@ class orderSupplierController {
       });
     }
   }
+
+  static async UpdateTotalPriceOrderSupplier(req, res) {
+    const { id } = req.body;
+
+    console.log("id order supplier detail services: ", id);
+
+    try {
+      const result = await OrderSupplierService.UpdateTotalPriceOrderSupplier(
+        id
+      );
+      res.status(200).json({
+        message: "Cập nhật chi tiết đơn hàng thành công",
+        result,
+      });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật chi tiết đơn hàng:", error.message);
+      res.status(500).json({
+        message: `Lỗi khi cập nhật chi tiết đơn hàng: ${error.message}`,
+      });
+    }
+  }
 }
 export default orderSupplierController;

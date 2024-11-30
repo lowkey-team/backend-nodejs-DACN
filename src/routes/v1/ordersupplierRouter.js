@@ -11,5 +11,9 @@ router.put(
   "/updateOrderDetail",
   orderSupplierController.updateOrderSupplierDetail
 );
+router.put(
+  "/UpdateTotal",
+  orderSupplierController.UpdateTotalPriceOrderSupplier
+);
 
 export const OrderSupplierRouters = router;

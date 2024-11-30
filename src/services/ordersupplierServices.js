@@ -67,6 +67,21 @@ class OrderSupplierService {
       throw new Error(`Lỗi trong Service: ${error.message}`);
     }
   }
+
+  static async UpdateTotalPriceOrderSupplier(id) {
+    console.log("id order supplier detail services: ", id);
+
+    try {
+      const result = await OrderModel.UpdateTotalPriceOrderSupplier(id);
+      return result;
+    } catch (error) {
+      console.error(
+        "Lỗi trong Service khi cập nhật chi tiết đơn hàng:",
+        error.message
+      );
+      throw new Error(`Lỗi trong Service: ${error.message}`);
+    }
+  }
 }
 
 export default OrderSupplierService;
