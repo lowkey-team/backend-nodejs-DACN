@@ -19,6 +19,7 @@ import { DiscountRouter } from "./discountRouter";
 import { VariationDiscountRouter } from "./variationDiscountRouter";
 
 import { CustomerRoute } from "./CustomerRouter";
+import { RolePermissionRouter } from "./RolePermissionRouter";
 
 const Router = express.Router();
 
@@ -40,7 +41,7 @@ Router.use("/supplier", SupplierRouter);
 Router.use("/orderSupplier", OrderSupplierRouters);
 Router.use("/discount", DiscountRouter);
 Router.use("/VariationDiscountRouter", VariationDiscountRouter);
-
 Router.use("/customer", CustomerRoute);
+Router.use("/roles", RolePermissionRouter);
 
 export const APIs_V1 = Router;
