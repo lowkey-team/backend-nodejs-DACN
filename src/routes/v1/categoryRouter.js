@@ -101,7 +101,6 @@ Router.delete(
 // Route lấy danh mục con theo ID (có thể chỉ cần quyền 'VIEW_SUBCATEGORY')
 Router.get(
   "/:categoryId/subcategories/:id",
-  checkPermission("VIEW_SUBCATEGORY"),
   CategoryController.findSubCategoryById
 );
 
