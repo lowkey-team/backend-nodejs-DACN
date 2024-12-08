@@ -2,12 +2,13 @@ import Employee from "~/models/EmployeesModel";
 
 class EmployeeService {
   static async createEmployee(data) {
-    const { fullName, phone, password, address } = data;
+    const { fullName, phone, password, address, roleIds } = data;
     const id = await Employee.createEmployee(
       fullName,
       phone,
       password,
-      address
+      address,
+      roleIds
     );
     return { id, message: "Employee created successfully" };
   }

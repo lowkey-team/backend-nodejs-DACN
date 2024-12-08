@@ -1,15 +1,45 @@
 import { GET_DB } from "~/config/mysql";
 
 class Employee {
-  static async createEmployee(fullName, phone, password, address) {
+  static async createEmployee(fullName, phone, password, address, roleIds) {
     const db = GET_DB();
-    const [result] = await db.query(
-      "INSERT INTO employees (FullName, Phone, Passwords, address, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())",
-      [fullName, phone, password, address]
-    );
-    return result.insertId;
-  }
+    let connection;
+    try {
+      connection = await db.getConnection();
+      await connection.beginTransaction();
 
+      const [result] = await connection.query(
+        "INSERT INTO employees (FullName, Phone, Passwords, address, isDelete, createdAt, updatedAt) VALUES (?, ?, ?, ?, 0, NOW(), NOW())",
+        [fullName, phone, password, address]
+      );
+      const employeeId = result.insertId;
+      console.log("Employee ID:", employeeId);
+
+      const roleValues = roleIds.map((roleId) => [
+        employeeId,
+        roleId,
+        new Date(),
+        new Date(),
+      ]);
+      await connection.query(
+        "INSERT INTO employee_roles (employee_id, role_id, createdAt, updatedAt) VALUES ?",
+        [roleValues]
+      );
+
+      await connection.commit();
+
+      return {
+        employeeId,
+        message: "Employee created and roles assigned successfully",
+      };
+    } catch (error) {
+      if (connection) await connection.rollback();
+      console.error("Error during transaction:", error);
+      throw error;
+    } finally {
+      if (connection) await connection.release();
+    }
+  }
   static async getAllEmployees() {
     const db = GET_DB();
     const [rows] = await db.query("SELECT * FROM employees WHERE isDelete = 0");
