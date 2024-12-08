@@ -133,6 +133,31 @@ class ProductController {
       res.status(500).json({ message: err.message });
     }
   }
+
+  static async suggestProductsByProductId(req, res) {
+    try {
+      const { productId } = req.params;
+      const { minSupport } = req.query;
+
+      if (isNaN(minSupport) || minSupport <= 0 || minSupport > 1) {
+        return res.status(400).json({
+          message: "minSupport phải là một số trong khoảng từ 0 đến 1.",
+        });
+      }
+
+      const result = await ProductService.suggestProductsByProductId(
+        productId,
+        parseFloat(minSupport)
+      );
+
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Lỗi khi gợi ý sản phẩm:", error);
+      res.status(500).json({
+        message: `Lỗi khi gợi ý sản phẩm: ${error.message}`,
+      });
+    }
+  }
 }
 
 export default ProductController;

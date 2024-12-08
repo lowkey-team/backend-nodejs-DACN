@@ -30,4 +30,9 @@ Router.route("/getProductBySup/:id").get(
 Router.route("/getProductBySupAdmin/:id").get(
   ProductController.GetProductsBySupCategory_Admin
 );
+
+Router.get(
+  "/suggestApriori/:productId",
+  ProductController.suggestProductsByProductId
+);
 export const productRoutes = Router;

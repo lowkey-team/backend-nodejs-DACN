@@ -1,4 +1,7 @@
+import aprioriMin from "apriori";
+const Apriori = require("apriori"); // Thay thế cho import
 import Invoice from "~/models/InvoiceModel";
+import Product from "~/models/ProductModel";
 
 class InvoiceService {
   static async createInvoice(invoiceData) {
