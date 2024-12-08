@@ -1,5 +1,6 @@
 import RoleModel from "~/models/RoleModel";
 import RolePermission from "~/models/RolePermissionModel";
+import PermissionModel from "~/models/PermissionModel";
 
 class RolePermissionService {
   static async createRolePermission(rolePermissionData) {
@@ -20,6 +21,10 @@ class RolePermissionService {
 
   static async getAllRolePermissions() {
     return await RolePermission.getAll();
+  }
+
+  static async getAllPermission() {
+    return await PermissionModel.getAll();
   }
 
   static async updateRolePermission(id, rolePermissionData) {

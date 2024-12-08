@@ -17,9 +17,7 @@ class PermissionModel {
   static async getAll() {
     const db = GET_DB();
     try {
-      const [rows] = await db.query(
-        "SELECT * FROM permissions WHERE isDelete = 0"
-      );
+      const [rows] = await db.query("SELECT id , name FROM permissions ");
       return rows;
     } catch (error) {
       throw error;

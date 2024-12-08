@@ -69,7 +69,32 @@ class Employee {
   static async getEmployeeById(id) {
     const db = GET_DB();
     const [rows] = await db.query(
-      "SELECT * FROM employees WHERE id = ? AND isDelete = 0",
+      `
+        SELECT 
+            e.id AS employeeId,
+            e.FullName,
+            e.Phone,
+            e.address,
+            e.createdAt,
+            e.updatedAt,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+              'idRole', r.id,
+                    'roleName', r.name,
+                    'hasRole', CASE WHEN er.employee_id IS NOT NULL THEN 1 ELSE 0 END
+                )
+            ) AS roles
+        FROM 
+            employees e
+        CROSS JOIN 
+            roles r 
+        LEFT JOIN 
+            employee_roles er ON e.id = er.employee_id AND er.role_id = r.id
+        WHERE 
+            e.id = ? AND e.isDelete = 0 AND r.isDelete = 0 
+        GROUP BY 
+            e.id;
+      `,
       [id]
     );
     return rows[0];
