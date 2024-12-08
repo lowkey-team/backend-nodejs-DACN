@@ -21,6 +21,7 @@ import { VariationDiscountRouter } from "./variationDiscountRouter";
 import { CustomerRoute } from "./CustomerRouter";
 import { DashboardRoute } from "./DashboardRouter";
 import { RolePermissionRouter } from "./RolePermissionRouter";
+import { EmployeeRoutes } from "./EmployeeRoutes";
 
 const Router = express.Router();
 
@@ -46,5 +47,6 @@ Router.use("/VariationDiscountRouter", VariationDiscountRouter);
 Router.use("/dashboard", DashboardRoute);
 Router.use("/customer", CustomerRoute);
 Router.use("/roles", RolePermissionRouter);
+Router.use("/employees", EmployeeRoutes);
 
 export const APIs_V1 = Router;
