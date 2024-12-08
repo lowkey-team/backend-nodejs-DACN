@@ -6,16 +6,7 @@ class RolePermissionService {
   static async createRolePermission(rolePermissionData) {
     const { role_id, permission_id } = rolePermissionData;
 
-    const roleExists = await RoleModel.findById(role_id);
-    if (!roleExists) {
-      throw new Error("Vai trò không tồn tại");
-    }
-
-    const permissionExists = await Permission.findById(permission_id);
-    if (!permissionExists) {
-      throw new Error("Quyền không tồn tại");
-    }
-
+    console.log("Role Per", role_id, permission_id);
     return await RolePermission.create(rolePermissionData);
   }
 

@@ -3,6 +3,7 @@ import { GET_DB } from "~/config/mysql";
 class RolePermission {
   static async create(rolePermissionData) {
     const { role_id, permission_id } = rolePermissionData;
+    console.log("Role Permission",role_id,permission_id);
     const db = GET_DB();
     try {
       const [result] = await db.query(

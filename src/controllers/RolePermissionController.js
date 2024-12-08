@@ -5,6 +5,7 @@ class RolePermissionController {
     try {
       const { role_id, permission_id } = req.body;
 
+      console.log("Role Permission", role_id, permission_id);
       if (!role_id || !permission_id) {
         return res
           .status(400)
@@ -26,6 +27,15 @@ class RolePermissionController {
     try {
       const rolePermissions =
         await RolePermissionService.getAllRolePermissions();
+      res.status(200).json(rolePermissions);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+  static async getAllPermission(req, res) {
+    try {
+      const rolePermissions = await RolePermissionService.getAllPermission();
       res.status(200).json(rolePermissions);
     } catch (err) {
       res.status(500).json({ message: err.message });
