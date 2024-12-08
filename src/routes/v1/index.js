@@ -22,6 +22,7 @@ import { CustomerRoute } from "./CustomerRouter";
 import { DashboardRoute } from "./DashboardRouter";
 import { RolePermissionRouter } from "./RolePermissionRouter";
 import { EmployeeRoutes } from "./EmployeeRoutes";
+import { RolesRoutes } from "./RolesRouter";
 
 const Router = express.Router();
 
@@ -48,5 +49,6 @@ Router.use("/dashboard", DashboardRoute);
 Router.use("/customer", CustomerRoute);
 Router.use("/roles", RolePermissionRouter);
 Router.use("/employees", EmployeeRoutes);
+Router.use("/RoleSystem", RolesRoutes);
 
 export const APIs_V1 = Router;
