@@ -441,6 +441,42 @@ class Product {
       throw error;
     }
   }
+
+  static async getInvoiceProductIdsForApriori() {
+    const db = GET_DB();
+
+    const query = `
+     SELECT 
+          JSON_ARRAYAGG(p.ID_Product) AS productIds
+      FROM 
+          invoice i
+      LEFT JOIN 
+          (SELECT DISTINCT p.ID_Product, d.ID_Invoice
+          FROM invoicedetail d
+          LEFT JOIN productvariation p ON d.ID_productVariation = p.id) AS p
+      ON i.invoice_id = p.ID_Invoice
+      GROUP BY 
+          i.invoice_id;
+    `;
+
+    const [rows] = await db.query(query);
+    return rows;
+  }
+  static async GetProductsByIds(productIds) {
+    const db = GET_DB();
+
+    try {
+      const [results] = await db.query(
+        "CALL doan_chuyennganh.GetProductsByIds(?)",
+        [productIds]
+      );
+
+      return results[0];
+    } catch (error) {
+      console.error("Lỗi khi gọi stored procedure GetProductsByIds:", error);
+      throw new Error("Không thể lấy sản phẩm");
+    }
+  }
 }
 
 export default Product;
