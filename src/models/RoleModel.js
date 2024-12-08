@@ -23,6 +23,32 @@ class RoleModel {
       throw error;
     }
   }
+
+  static async addRoleToEmployee(employee_id, role_id) {
+    const db = GET_DB();
+    try {
+      const [result] = await db.query(
+        "INSERT INTO employee_roles (employee_id, role_id, createdAt, updatedAt) VALUES (?, ?, NOW(), NOW())",
+        [employee_id, role_id]
+      );
+      return result.insertId;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async removeRoleFromEmployee(employee_id, role_id) {
+    const db = GET_DB();
+    try {
+      const [result] = await db.query(
+        "DELETE FROM employee_roles WHERE employee_id = ? AND role_id = ?",
+        [employee_id, role_id]
+      );
+      return result.affectedRows;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default RoleModel;
