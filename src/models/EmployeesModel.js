@@ -42,7 +42,27 @@ class Employee {
   }
   static async getAllEmployees() {
     const db = GET_DB();
-    const [rows] = await db.query("SELECT * FROM employees WHERE isDelete = 0");
+    const [rows] = await db.query(`
+        SELECT 
+            e.id AS employeeId,
+            e.FullName AS employeeName,
+            e.Phone,
+            e.address,
+            e.isDelete,
+            e.createdAt,
+            e.updatedAt,
+            GROUP_CONCAT(r.name SEPARATOR ', ') AS roles
+        FROM 
+            employees e
+        LEFT JOIN 
+            employee_roles er ON e.id = er.employee_id
+        LEFT JOIN 
+            roles r ON er.role_id = r.id
+        
+        GROUP BY 
+            e.id;
+
+            `);
     return rows;
   }
 
