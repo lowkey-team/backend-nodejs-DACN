@@ -4,7 +4,7 @@ class RoleService {
   static async getRoleById(id) {
     try {
       const role = await RoleModel.findById(id);
-      if (!role) {
+      if (!role || role.length === 0) {
         throw new Error("Role not found");
       }
       return role;
