@@ -19,7 +19,9 @@ class RoleModel {
         LEFT JOIN 
           role_permissions rp ON p.id = rp.permission_id AND rp.role_id = ?
         WHERE 
-          p.isDelete = 0;
+          p.isDelete = 0
+          ORDER BY 
+        p.name ASC;
         `,
         [id]
       );
