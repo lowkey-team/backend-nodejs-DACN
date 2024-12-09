@@ -58,16 +58,21 @@ class RolePermissionController {
   }
 
   static async deleteRolePermission(req, res) {
-    const { id } = req.params;
+    const { role_id, permission_id } = req.body;
     try {
-      const result = await RolePermissionService.deleteRolePermission(id);
-      if (result) {
-        res.status(200).json({ message: "Phân quyền đã được xóa" });
-      } else {
-        res.status(404).json({ message: "Phân quyền không tồn tại" });
+      if (!role_id || !permission_id) {
+        return res
+          .status(400)
+          .json({ message: "Missing role_id or permission_id" });
       }
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+
+      const result = await RolePermissionService.deleteRolePermission(
+        role_id,
+        permission_id
+      );
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   }
 }
