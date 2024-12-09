@@ -7,5 +7,6 @@ Router.post("/", RolePermissionController.createRolePermission);
 Router.get("/", RolePermissionController.getAllRolePermissions);
 Router.put("/:id", RolePermissionController.updateRolePermission);
 Router.delete("/:id", RolePermissionController.deleteRolePermission);
+Router.get("/getAllPermission", RolePermissionController.getAllPermission);
 
 export const RolePermissionRouter = Router;
