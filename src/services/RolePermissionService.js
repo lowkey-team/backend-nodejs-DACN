@@ -22,8 +22,16 @@ class RolePermissionService {
     return await RolePermission.update(id, rolePermissionData);
   }
 
-  static async deleteRolePermission(id) {
-    return await RolePermission.delete(id);
+  static async deleteRolePermission(role_id, permission_id) {
+    try {
+      const isDeleted = await RolePermission.delete(role_id, permission_id);
+      if (!isDeleted) {
+        throw new Error("Role permission not found or already deleted");
+      }
+      return { message: "Role permission deleted successfully" };
+    } catch (error) {
+      throw new Error(`Error in deleteRolePermission: ${error.message}`);
+    }
   }
 }
 
