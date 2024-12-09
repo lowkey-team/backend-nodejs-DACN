@@ -10,7 +10,7 @@ Router.post("/", SupplierController.createSupplier);
 Router.put("/:id", SupplierController.updateSupplier);
 Router.delete("/:id", SupplierController.deleteSupplier);
 
-// export const SupplierRouter = Router;
+export const SupplierRouter = Router;
 
 // import express from "express";
 // import SupplierController from "~/controllers/SupplierController";
