@@ -52,6 +52,32 @@ class DashboardModel {
       throw error;
     }
   }
+
+  static async getMonthlyRevenue() {
+    const db = GET_DB();
+    try {
+      const [rows] = await db.query(
+       `SELECT 
+            YEAR(createdAt) AS year,
+            MONTH(createdAt) AS month,
+            SUM(finalAmount) AS totalRevenue
+        FROM 
+            invoice
+        WHERE 
+            YEAR(createdAt) = YEAR(CURDATE()) 
+            AND orderStatus = 'Được giao'     
+        GROUP BY 
+            YEAR(createdAt), MONTH(createdAt)
+        ORDER BY 
+            month`
+      );
+
+      return rows;
+    } catch (error) {
+      console.log("Error fetching monthly revenue:", error);
+      throw error;
+    }
+  }
 }
 
 export default DashboardModel;
