@@ -467,7 +467,7 @@ class Product {
 
     try {
       const [results] = await db.query(
-        "CALL doan_chuyennganh.GetProductsByIds(?)",
+        "CALL GetProductsByIds(?)",
         [productIds]
       );
 
