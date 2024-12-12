@@ -19,6 +19,33 @@ class ProductController {
     }
   }
 
+  static async updateStock(req, res) {
+    const { ID_Variation, newStock, orderID } = req.body;
+
+    if (!ID_Variation || typeof newStock !== "number" || newStock < 0) {
+      return res.status(400).json({
+        message:
+          "ID_Variation và newStock là bắt buộc, và newStock phải là số dương.",
+      });
+    }
+
+    try {
+      const result = await ProductService.updateStock(
+        ID_Variation,
+        newStock,
+        orderID
+      );
+
+      if (result.success) {
+        res.status(200).json({ message: result.message });
+      } else {
+        res.status(400).json({ message: result.message });
+      }
+    } catch (err) {
+      res.status(500).json({ message: "Lỗi server: " + err.message });
+    }
+  }
+
   static async getProductAllPage(req, res) {
     try {
       const products = await ProductService.getProductAllPage(req.query);
@@ -44,7 +71,7 @@ class ProductController {
       );
       res.status(200).json(products);
     } catch (error) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ message: error.message });
     }
   }
   static async createProduct(req, res) {

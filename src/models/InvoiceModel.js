@@ -18,6 +18,7 @@ class Invoice {
       phoneNumber,
       customerName,
       items,
+      shipmentFee,
     } = invoiceData;
 
     const db = await GET_DB();
@@ -33,8 +34,8 @@ class Invoice {
         `INSERT INTO Invoice 
           (ID_Employeer, ID_User, totalAmount, discountAmount, finalAmount, voucherCode, 
           paymentStatus, paymentMethod, orderStatus, note, receivedDate, 
-          shippingAddress, phoneNumber, customerName) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`,
+          shippingAddress, phoneNumber, customerName, shipmentFee) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`,
         [
           employeerId,
           userId,
@@ -50,6 +51,7 @@ class Invoice {
           shippingAddress || null,
           phoneNumber || null,
           customerName || null,
+          shipmentFee,
         ]
       );
 
