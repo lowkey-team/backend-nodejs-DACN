@@ -45,11 +45,11 @@ class returnDetailController {
 
   static async update(req, res) {
     const { id } = req.params;
-    const returnDetailData = req.body;
+    const status = req.body;
     try {
       const updatedReturnDetail = await returnDetailService.updateReturnDetail(
         id,
-        returnDetailData
+        status
       );
       if (updatedReturnDetail) {
         res.status(200).json({

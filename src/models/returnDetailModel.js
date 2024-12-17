@@ -39,38 +39,17 @@ class returnDetail {
   }
 
   // Cập nhật một bản ghi return_detail theo ID
-  static async update(id, returnDetail) {
-    const {
-      ID_invoiceDetail,
-      returnQuantity,
-      reason,
-      images,
-      status,
-      phoneNumber,
-    } = returnDetail;
-
+  static async update(id, status) {
+    console.log("data updtae model:", id, status);
     const db = GET_DB();
     const query = `
-      UPDATE return_detail
-      SET 
-        ID_invoiceDetail = ?,
-        returnQuantity = ?,
-        reason = ?,
-        images = ?,
-        status = ?,
-        phoneNumber = ?,
-        updatedAt = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `;
-    const values = [
-      ID_invoiceDetail,
-      returnQuantity,
-      reason,
-      images,
-      status,
-      phoneNumber,
-      id,
-    ];
+    UPDATE return_detail
+    SET 
+      status = ?
+    WHERE id = ?
+  `;
+
+    const values = [status, id];
 
     const [result] = await db.query(query, values);
     return result.affectedRows > 0 ? { id, ...returnDetail } : null;

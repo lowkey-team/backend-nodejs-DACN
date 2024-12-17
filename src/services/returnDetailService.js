@@ -58,12 +58,9 @@ class returnDetailService {
     }
   }
 
-  static async updateReturnDetail(id, returnDetailData) {
+  static async updateReturnDetail(id, status) {
     try {
-      const updatedReturnDetail = await returnDetail.update(
-        id,
-        returnDetailData
-      );
+      const updatedReturnDetail = await returnDetail.update(id, status);
       return updatedReturnDetail;
     } catch (error) {
       throw new Error("Không thể cập nhật return_detail.");
