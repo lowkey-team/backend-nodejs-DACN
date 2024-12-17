@@ -564,18 +564,13 @@ class Product {
         );
       }
 
-      const updatedQuantityOrdered = orderDetail[0].QuantityOrdered - newStock;
       const updatedImportQuantity = orderDetail[0].ImportQuantity + newStock;
 
-      console.log(
-        "id giam sl đặt",
-        updatedQuantityOrdered,
-        updatedImportQuantity
-      );
+      console.log("id giam sl đặt", updatedImportQuantity);
       // Cập nhật lại số lượng đặt hàng và số lượng đã nhập trong bảng ordersupplierdetail
       const [orderUpdateResult] = await db.query(
-        `UPDATE ordersupplierdetail SET QuantityOrdered = ?, ImportQuantity = ? WHERE id=?`,
-        [updatedQuantityOrdered, updatedImportQuantity, orderID]
+        `UPDATE ordersupplierdetail SET  ImportQuantity = ? WHERE id=?`,
+        [updatedImportQuantity, orderID]
       );
 
       // Kiểm tra nếu không có bản ghi nào bị thay đổi
