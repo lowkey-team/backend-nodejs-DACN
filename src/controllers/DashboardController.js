@@ -36,6 +36,15 @@ class DashboardController {
       res.status(500).json({message: err.message})
     }
   }
+
+  static async getMonthlyRevenueController(req, res) {
+    try {
+      const monthlyRevenue = await DashboardService.getMonthlyRevenueService();
+      res.status(200).json({ monthlyRevenue });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
 }
 
 export default DashboardController;

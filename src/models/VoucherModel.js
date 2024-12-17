@@ -13,6 +13,17 @@ class Voucher {
     }
   }
 
+  static async getAllVoucherManagementModel() {
+    console.log("model voucher");
+    const db = GET_DB(); 
+    try {
+      const rows = await db.query(`SELECT * FROM voucher;`);
+      return rows[0];
+    } catch (err) {
+      throw new Error("Error fetching vouchers: " + err.message);
+    }
+  }
+
   static async getAll(id_user) {
     console.log("voucher nugoi dung", id_user);
     const db = GET_DB();
@@ -50,23 +61,39 @@ class Voucher {
       startDate,
       endDate,
       isActive,
+      max_discount_amount,
     } = voucherData;
+    
     const db = GET_DB();
-    const [result] = await db.query(
-      "INSERT INTO Voucher (voucherCode, description, discountValue, minOrderValue, maxUses, startDate, endDate, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
-      [
-        voucherCode,
-        description,
-        discountValue,
-        minOrderValue,
-        maxUses,
-        startDate,
-        endDate,
-        isActive,
-      ]
-    );
-    return { id: result.insertId, voucherCode };
+  
+    try {
+      const [existingVoucher] = await db.query("SELECT * FROM Voucher WHERE voucherCode = ?", [voucherCode]);
+      if (existingVoucher.length > 0) {
+        throw new Error(`Mã voucher: ${voucherCode} đã tồn tại.`);
+      }
+  
+      const [result] = await db.query(
+        "INSERT INTO Voucher (voucherCode, description, discountValue, minOrderValue, maxUses, startDate, endDate, isActive, createdAt, updatedAt, max_discount_amount) VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW(), ?)",
+        [
+          voucherCode,
+          description,
+          discountValue,
+          minOrderValue,
+          maxUses,
+          startDate,
+          endDate,
+          isActive,
+          max_discount_amount,
+        ]
+      );
+  
+      return { id: result.insertId, voucherCode };
+    } catch (err) {
+      console.error("Error while creating voucher:", err);
+      throw err;
+    }
   }
+  
 
   static async update(id, voucherData) {
     const {
@@ -77,26 +104,43 @@ class Voucher {
       maxUses,
       startDate,
       endDate,
-      isActive,
+      max_discount_amount,
     } = voucherData;
+  
     const db = GET_DB();
-    await db.query(
-      "UPDATE Voucher SET voucherCode = ?, description = ?, discountValue = ?, minOrderValue = ?, maxUses = ?, startDate = ?, endDate = ?, isActive = ?, updatedAt = NOW() WHERE id = ?",
-      [
-        voucherCode,
-        description,
-        discountValue,
-        minOrderValue,
-        maxUses,
-        startDate,
-        endDate,
-        isActive,
-        id,
-      ]
-    );
-    return { id, voucherCode };
+  
+    try {
+      const [existingVoucher] = await db.query(
+        "SELECT * FROM Voucher WHERE voucherCode = ? AND id != ?",
+        [voucherCode, id]
+      );
+  
+      if (existingVoucher.length > 0) {
+        throw new Error(`Mã voucher: ${voucherCode} đã tồn tại.`);
+      }
+  
+      await db.query(
+        "UPDATE Voucher SET voucherCode = ?, description = ?, discountValue = ?, minOrderValue = ?, maxUses = ?, startDate = ?, endDate = ?, updatedAt = NOW(), max_discount_amount = ? WHERE id = ?",
+        [
+          voucherCode,
+          description,
+          discountValue,
+          minOrderValue,
+          maxUses,
+          startDate,
+          endDate,
+          max_discount_amount,
+          id
+        ]
+      );
+  
+      return { id, voucherCode };
+    } catch (err) {
+      console.error("Error while updating voucher:", err);
+      throw err;
+    }
   }
-
+  
   static async delete(id) {
     const db = GET_DB();
     const [result] = await db.query(

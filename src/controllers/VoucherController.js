@@ -12,6 +12,17 @@ class VoucherController {
     }
   }
 
+  static async getAllVoucherAdminController(req, res) {
+    console.log("controller voucher");
+    try {
+      const voucher = await VoucherService.getAllVoucherManagementService();
+      res.status(200).json(voucher);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+
   static async GetVouchersSaveByUserID(req, res) {
     const id_user = req.params.id;
     console.log("data id user controller: ", id_user);
@@ -72,7 +83,7 @@ class VoucherController {
       if (result) {
         res.status(200).json({ message: "Voucher đã bị xóa" });
       } else {
-        res.status(404).json({ message: "Voucher không tồn tại" });
+        res.status(404).json({ message: "Voucher không tồn tạ ddddi" });
       }
     } catch (err) {
       res.status(500).json({ message: err.message });
