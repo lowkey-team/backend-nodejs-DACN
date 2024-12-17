@@ -96,6 +96,44 @@ class VariationDiscountController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  // Lọc biến thể sản phẩm theo danh mục và danh mục con
+  static async getProductVariations(req, res) {
+    const { categoryId, subCategoryId } = req.query;
+
+    if (!categoryId) {
+      return res.status(400).json({ message: "Vui lòng chọn danh mục" });
+    }
+
+    try {
+      const variations = await VariationDiscountService.getProductVariations(
+        categoryId,
+        subCategoryId
+      );
+      res.status(200).json(variations);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+static async createMultipleVariationDiscounts(req, res) {
+  console.log("Body nhận được:", req.body);
+
+  try {
+      const data = Array.isArray(req.body) ? req.body : [req.body];
+      console.log("Dữ liệu đã chuyển thành mảng:", data);
+      const variationDiscounts = await VariationDiscountService.createMultipleVariationDiscounts(data);
+      res.status(200).json({
+          message: "Tạo giảm giá thành công cho các biến thể",
+          affectedRows: variationDiscounts.affectedRows,
+      });
+  } catch (err) {
+      console.log("Lỗi khi thêm giảm giá:", err);
+      res.status(500).json({ message: err.message });
+  }
+}
+
+
 }
 
 export default VariationDiscountController;

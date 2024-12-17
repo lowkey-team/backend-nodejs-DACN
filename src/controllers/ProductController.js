@@ -185,6 +185,17 @@ class ProductController {
       });
     }
   }
+
+  static async getProductsWithoutDiscount(req, res) {
+    try {
+        const products = await ProductService.getProductsWithNoDiscount();
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm chưa có giảm giá:", error);
+        res.status(500).json({ message: "Lỗi khi lấy sản phẩm chưa có giảm giá" });
+    }
+}
+
 }
 
 export default ProductController;
