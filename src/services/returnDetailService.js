@@ -30,6 +30,7 @@ class returnDetailService {
         reason,
         status = "Đang chờ xử lý",
         phoneNumber,
+        ID_User
       } = returnDetailData;
 
       let imageUrl = null;
@@ -49,6 +50,7 @@ class returnDetailService {
         images: imageUrl || null,
         status,
         phoneNumber,
+        ID_User
       });
 
       return createdReturnDetail;

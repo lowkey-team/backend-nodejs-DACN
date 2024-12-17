@@ -15,17 +15,20 @@ class returnDetail {
     r.returnQuantity AS quantity_returned, 
     r.images AS img_return,  
     r.createdAt AS createdAt,  
-    r.phoneNumber AS phone 
-FROM 
-    return_detail r
-JOIN 
-    invoicedetail ivd ON ivd.id = r.ID_invoiceDetail
-JOIN 
-    invoice iv ON iv.invoice_id = ivd.ID_Invoice 
-JOIN 
-    productvariation pv ON pv.id = ivd.ID_productVariation 
-JOIN 
-    product p ON p.id = pv.ID_Product 
+    r.phoneNumber AS phone,
+    u.FullName AS user_name
+    FROM 
+        return_detail r
+    JOIN 
+        invoicedetail ivd ON ivd.id = r.ID_invoiceDetail
+    JOIN 
+        invoice iv ON iv.invoice_id = ivd.ID_Invoice 
+    JOIN 
+        productvariation pv ON pv.id = ivd.ID_productVariation 
+    JOIN 
+        product p ON p.id = pv.ID_Product 
+    JOIN 
+      users u ON u.id = r.ID_User
 `);
     return rows;
   }
@@ -39,13 +42,14 @@ JOIN
       images,
       status = "Đang chờ xử lý", // Giá trị mặc định
       phoneNumber,
+      ID_User,
     } = returnDetail;
 
     const db = GET_DB();
     const query = `
       INSERT INTO return_detail 
-      (ID_invoiceDetail, returnQuantity, reason, images, status, phoneNumber)
-      VALUES (?, ?, ?, ?, ?, ?)
+      (ID_invoiceDetail, returnQuantity, reason, images, status, phoneNumber, ID_User)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       ID_invoiceDetail,
@@ -54,6 +58,7 @@ JOIN
       images,
       status,
       phoneNumber,
+      ID_User,
     ];
 
     const [result] = await db.query(query, values);
