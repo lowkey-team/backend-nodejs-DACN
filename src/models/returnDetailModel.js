@@ -4,7 +4,29 @@ class returnDetail {
   // Lấy tất cả dữ liệu từ bảng return_detail
   static async getAll() {
     const db = GET_DB();
-    const [rows] = await db.query(`SELECT * FROM return_detail;`);
+    const [rows] = await db.query(`SELECT 
+    r.id AS id_returnInvoice,
+    iv.invoice_id AS invoice_id,
+    p.productName AS product_name,  
+    pv.ID_Product AS product_id, 
+    pv.size AS product_variant,  
+    r.reason AS return_reason, 
+    r.status AS return_status, 
+    r.returnQuantity AS quantity_returned, 
+    r.images AS img_return,  
+    r.createdAt AS createdAt,  
+    r.phoneNumber AS phone 
+FROM 
+    return_detail r
+JOIN 
+    invoicedetail ivd ON ivd.id = r.ID_invoiceDetail
+JOIN 
+    invoice iv ON iv.invoice_id = ivd.ID_Invoice 
+JOIN 
+    productvariation pv ON pv.id = ivd.ID_productVariation 
+JOIN 
+    product p ON p.id = pv.ID_Product 
+`);
     return rows;
   }
 
