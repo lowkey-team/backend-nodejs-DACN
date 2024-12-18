@@ -3,14 +3,33 @@ import { GET_DB } from "~/config/mysql";
 class RoleModel {
   static async findById(id) {
     const db = GET_DB();
+    console.log("id role", id);
     try {
       const [rows] = await db.query(
-        "SELECT * FROM roles WHERE id = ? AND isDelete = 0",
+        `
+        SELECT 
+          p.id AS permissionId,
+          p.name AS permissionName,
+          CASE 
+              WHEN rp.role_id IS NOT NULL THEN 1 
+              ELSE 0  
+          END AS hasPermission  
+        FROM 
+          permissions p
+        LEFT JOIN 
+          role_permissions rp ON p.id = rp.permission_id AND rp.role_id = ?
+        WHERE 
+          p.isDelete = 0
+          ORDER BY 
+        p.name ASC;
+        `,
         [id]
       );
-      return rows[0] || null;
+      console.log("data role", rows);
+      return rows || []; // Trả về mảng rỗng nếu không có dữ liệu
     } catch (error) {
-      throw error;
+      console.error("Error in findById:", error);
+      throw new Error(`Error fetching role permissions: ${error.message}`);
     }
   }
 

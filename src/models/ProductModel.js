@@ -466,15 +466,87 @@ class Product {
     const db = GET_DB();
 
     try {
-      const [results] = await db.query(
-        "CALL GetProductsByIds(?)",
-        [productIds]
-      );
+      const [results] = await db.query("CALL GetProductsByIds(?)", [
+        productIds,
+      ]);
 
       return results[0];
     } catch (error) {
       console.error("Lỗi khi gọi stored procedure GetProductsByIds:", error);
       throw new Error("Không thể lấy sản phẩm");
+    }
+  }
+
+  static async updateStock(ID_Variation, newStock, orderID) {
+    const db = GET_DB();
+
+    try {
+      // Lấy số lượng tồn cũ
+      const [currentStock] = await db.query(
+        `SELECT stock FROM productvariation WHERE id = ? AND isDelete = 0`,
+        [ID_Variation]
+      );
+
+      // Kiểm tra nếu không tìm thấy biến thể hoặc biến thể đã bị xóa
+      if (currentStock.length === 0) {
+        throw new Error(
+          "Không tìm thấy biến thể sản phẩm hoặc biến thể đã bị xóa."
+        );
+      }
+
+      // Cộng dồn số lượng tồn mới vào số lượng tồn cũ
+      const updatedStock = currentStock[0].stock + newStock;
+
+      // Cập nhật lại số lượng tồn trong bảng productvariation
+      const [stockUpdateResult] = await db.query(
+        `UPDATE productvariation SET stock = ? WHERE id = ? AND isDelete = 0`,
+        [updatedStock, ID_Variation]
+      );
+
+      // Kiểm tra nếu không có bản ghi nào bị thay đổi
+      if (stockUpdateResult.affectedRows === 0) {
+        throw new Error(
+          "Không tìm thấy biến thể sản phẩm hoặc biến thể đã bị xóa."
+        );
+      }
+
+      console.log("id giam", orderID);
+      // Giảm số lượng đặt hàng trong bảng ordersupplierdetail
+      const [orderDetail] = await db.query(
+        `SELECT QuantityOrdered, ImportQuantity FROM ordersupplierdetail WHERE id=?`,
+        [orderID]
+      );
+
+      // Kiểm tra nếu không tìm thấy đơn hàng
+      if (orderDetail.length === 0) {
+        throw new Error(
+          "Không tìm thấy đơn hàng hoặc biến thể sản phẩm trong bảng ordersupplierdetail."
+        );
+      }
+
+      const updatedImportQuantity = orderDetail[0].ImportQuantity + newStock;
+
+      console.log("id giam sl đặt", updatedImportQuantity);
+      // Cập nhật lại số lượng đặt hàng và số lượng đã nhập trong bảng ordersupplierdetail
+      const [orderUpdateResult] = await db.query(
+        `UPDATE ordersupplierdetail SET  ImportQuantity = ? WHERE id=?`,
+        [updatedImportQuantity, orderID]
+      );
+
+      // Kiểm tra nếu không có bản ghi nào bị thay đổi
+      if (orderUpdateResult.affectedRows === 0) {
+        throw new Error(
+          "Không thể cập nhật số lượng đặt hàng và số lượng nhập."
+        );
+      }
+
+      return {
+        success: true,
+        message:
+          "Cập nhật số lượng tồn, số lượng đặt và số lượng nhập thành công.",
+      };
+    } catch (error) {
+      return { success: false, message: error.message };
     }
   }
 }

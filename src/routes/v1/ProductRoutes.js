@@ -17,6 +17,7 @@ Router.route("/getTop10").get(ProductController.getTop10NewestProducts);
 Router.route("/getSortByCategory").get(
   ProductController.getAllProductsSortedByCategory
 );
+Router.route("/update-stock").post(ProductController.updateStock);
 
 Router.route("/:id")
   .get(ProductController.findProductById)
@@ -35,4 +36,6 @@ Router.get(
   "/suggestApriori/:productId",
   ProductController.suggestProductsByProductId
 );
+
+Router.delete("/deleted/:id", ProductController.deleteProduct);
 export const productRoutes = Router;

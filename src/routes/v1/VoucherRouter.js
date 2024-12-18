@@ -14,5 +14,8 @@ Router.put("/:id", VoucherController.updateVoucher);
 Router.delete("/:id", VoucherController.deleteVoucher);
 Router.get("/:id", VoucherController.findVoucherById);
 Router.get("/check/:voucherCode", VoucherController.checkVoucherCode);
+Router.get("/all/voucher", VoucherController.getAllVoucherAdminController);
+
+
 
 export const VoucherRouter = Router;

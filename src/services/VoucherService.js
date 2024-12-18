@@ -5,6 +5,11 @@ class VoucherService {
     return await Voucher.getAll(id_user);
   }
 
+  static async getAllVoucherManagementService(){
+    console.log("service voucher");
+    return await Voucher.getAllVoucherManagementModel();
+  }
+
   static async GetVouchersSaveByUserID(id_user) {
     return await Voucher.GetVouchersSaveByUserID(id_user);
   }

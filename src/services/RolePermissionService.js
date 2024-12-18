@@ -6,16 +6,7 @@ class RolePermissionService {
   static async createRolePermission(rolePermissionData) {
     const { role_id, permission_id } = rolePermissionData;
 
-    const roleExists = await RoleModel.findById(role_id);
-    if (!roleExists) {
-      throw new Error("Vai trò không tồn tại");
-    }
-
-    const permissionExists = await Permission.findById(permission_id);
-    if (!permissionExists) {
-      throw new Error("Quyền không tồn tại");
-    }
-
+    console.log("Role Per", role_id, permission_id);
     return await RolePermission.create(rolePermissionData);
   }
 
@@ -31,8 +22,16 @@ class RolePermissionService {
     return await RolePermission.update(id, rolePermissionData);
   }
 
-  static async deleteRolePermission(id) {
-    return await RolePermission.delete(id);
+  static async deleteRolePermission(role_id, permission_id) {
+    try {
+      const isDeleted = await RolePermission.delete(role_id, permission_id);
+      if (!isDeleted) {
+        throw new Error("Role permission not found or already deleted");
+      }
+      return { message: "Role permission deleted successfully" };
+    } catch (error) {
+      throw new Error(`Error in deleteRolePermission: ${error.message}`);
+    }
   }
 }
 

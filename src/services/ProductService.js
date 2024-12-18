@@ -11,6 +11,29 @@ class ProductService {
   static async getAll() {
     return await Product.getAll();
   }
+
+  static async updateStock(ID_Variation, newStock, orderID) {
+    try {
+      const result = await Product.updateStock(ID_Variation, newStock, orderID);
+
+      if (result.success) {
+        return {
+          success: true,
+          message: result.message,
+        };
+      } else {
+        return {
+          success: false,
+          message: result.message,
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
   static async getProductAllPage() {
     return await Product.getProductAllPage();
   }
@@ -47,10 +70,6 @@ class ProductService {
   }
 
   static async deleteProduct(id) {
-    const product = await Product.findById(id);
-    if (!product) {
-      throw new Error("Sản phẩm không tồn tại");
-    }
     return await Product.delete(id);
   }
 
