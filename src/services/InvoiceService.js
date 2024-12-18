@@ -43,6 +43,16 @@ class InvoiceService {
     }
   }
 
+  static async GetSalesReport(startDate, endDate) {
+    try {
+      const result = await Invoice.GetSalesReport(startDate, endDate);
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi tìm hóa đơn của người dùng:", error);
+      throw new Error(`Lỗi khi tìm hóa đơn của người dùng: ${error.message}`);
+    }
+  }
+
   static async getInvoiceDetailFindByID_Invoice(ID_Invoice) {
     try {
       const result = await Invoice.getInvoiceDetailFindByID_Invoice(ID_Invoice);

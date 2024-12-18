@@ -11,6 +11,7 @@ router.get(
 );
 
 router.get("/invoicesAll", InvoiceController.getInvoiceAll);
+router.post("/GetSalesReport/getll", InvoiceController.GetSalesReport);
 router.get(
   "/detail/:ID_Invoice",
   InvoiceController.getInvoiceDetailFindByID_Invoice

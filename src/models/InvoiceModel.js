@@ -223,6 +223,14 @@ class Invoice {
     const [rows] = await db.query(query);
     return rows;
   }
+  static async GetSalesReport(startDate, endDate) {
+    const db = GET_DB();
+    const [rows] = await db.query("CALL GetSalesReport(?, ?)", [
+      startDate,
+      endDate,
+    ]);
+    return rows[0];
+  }
 }
 
 export default Invoice;
