@@ -78,6 +78,37 @@ class DashboardModel {
       throw error;
     }
   }
+
+  static async getRevenueByProductVariation() {
+    const db = GET_DB();
+    try {
+      const [rows] = await db.query(
+        `SELECT 
+          p.id AS productID,
+          p.productName AS productName, 
+          pv.size AS productSize,
+          pv.id AS productVariationID,
+          SUM(id.Amount) AS totalRevenue
+        FROM 
+          invoicedetail id
+        INNER JOIN 
+          invoice i ON id.ID_Invoice = i.invoice_id
+        INNER JOIN 
+          productvariation pv ON id.ID_productVariation = pv.id
+        INNER JOIN 
+          product p ON pv.ID_Product = p.id 
+        WHERE 
+          i.paymentStatus = 'Đã thanh toán' 
+          AND i.orderStatus = 'Được giao'
+        GROUP BY 
+          p.id, p.productName, pv.size, pv.id`
+      );
+      return rows;
+    } catch (error) {
+      console.error("Error fetching revenue by product variation:", error);
+      throw error;
+    }
+  }
 }
 
 export default DashboardModel;

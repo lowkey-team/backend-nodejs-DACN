@@ -20,5 +20,10 @@ class DashboardService {
   static async getMonthlyRevenueService(){
     return await DashboardModel.getMonthlyRevenue();
   }
+
+  static async getRevenueByProductVariationService() {
+    return await DashboardModel.getRevenueByProductVariation();
+  }
+  
 }
 export default DashboardService;

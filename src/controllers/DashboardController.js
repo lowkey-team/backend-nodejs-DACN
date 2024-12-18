@@ -45,6 +45,16 @@ class DashboardController {
       res.status(500).json({ message: err.message });
     }
   }
+
+  static async getRevenueByProductVariationController(req, res) {
+    try {
+      const revenueData = await DashboardService.getRevenueByProductVariationService();
+      res.status(200).json({ revenueData });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+  
 }
 
 export default DashboardController;
