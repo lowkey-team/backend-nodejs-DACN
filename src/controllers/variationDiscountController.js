@@ -133,6 +133,16 @@ static async createMultipleVariationDiscounts(req, res) {
   }
 }
 
+static async getDiscountedVariations(req, res) {
+  try {
+    const discountedVariations = await VariationDiscountService.getDiscountedVariations();
+    res.status(200).json(discountedVariations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
 
 }
 

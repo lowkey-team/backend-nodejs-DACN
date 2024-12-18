@@ -98,6 +98,34 @@ class VariationDiscountModel {
     return variations;
   }
 
+  static async getDiscountedVariations() {
+    const db = await GET_DB();
+    const query = `
+      SELECT 
+          vd.id AS id,
+          p.productName AS productName,
+          d.discount AS discountPercent,
+          pv.size AS size,
+          vd.StartDate AS startDate,
+          vd.EndDate AS endDate
+      FROM 
+          variation_discount vd
+      JOIN 
+          productvariation pv ON vd.ID_Variation = pv.id
+      JOIN 
+          product p ON pv.ID_Product = p.id
+      JOIN 
+          discount d ON vd.ID_Discount = d.id
+      WHERE 
+          vd.status = 1
+          AND vd.StartDate <= NOW() 
+          AND vd.EndDate >= NOW()
+          AND pv.isDelete = 0;
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+}
+
 
 }
 

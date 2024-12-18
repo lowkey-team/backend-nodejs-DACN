@@ -67,6 +67,15 @@ class VariationDiscountService {
     }
   }
 
+  static async getDiscountedVariations() {
+    try {
+      return await VariationDiscountModel.getDiscountedVariations();
+    } catch (error) {
+      throw new Error("Lỗi khi lấy danh sách biến thể được giảm giá: " + error.message);
+    }
+  }
+  
+
 }
 
 export default VariationDiscountService;
