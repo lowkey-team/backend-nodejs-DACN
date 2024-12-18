@@ -79,6 +79,46 @@ class Product {
     `);
     return rows;
   }
+  static async getProductsWithNoDiscount() {
+    const db = GET_DB();
+    const [rows] = await db.query(`
+      SELECT 
+        p.id AS product_id,
+        p.productName,
+        p.createdAt,
+        sc.SupCategoryName AS subcategory_name,
+        c.categoryName AS category_name,
+        (SELECT img.IMG_URL
+          FROM productImage img 
+          WHERE img.ProductID = p.id LIMIT 1) AS images,
+        JSON_ARRAYAGG(JSON_OBJECT(
+          'variation_id', pv.id,
+          'size', pv.size,
+          'price', pv.Price,
+          'stock', pv.stock,
+          'isDelete', pv.isDelete,
+          'updatedAt', pv.updatedAt
+        )) AS variations 
+      FROM 
+        Product p
+      LEFT JOIN 
+        SupCategory sc ON p.ID_SupCategory = sc.id
+      LEFT JOIN 
+        category c ON sc.categoryId = c.id
+      LEFT JOIN 
+        productVariation pv ON p.id = pv.ID_Product
+      LEFT JOIN 
+        variation_discount vd ON pv.id = vd.ID_Variation
+      WHERE 
+        p.isDelete = 0
+        AND (vd.ID_Variation IS NULL)
+      GROUP BY 
+        p.id, p.productName, p.createdAt, sc.SupCategoryName, c.categoryName;
+    `);
+    return rows;
+}
+
+
   static async getTop10NewestProducts() {
     const db = GET_DB();
     const [rows] = await db.query(`

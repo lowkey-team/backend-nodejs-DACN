@@ -220,6 +220,11 @@ class ProductService {
       throw error;
     }
   }
+
+  static async getProductsWithNoDiscount() {
+    return await Product.getProductsWithNoDiscount();
+}
+
 }
 
 export default ProductService;

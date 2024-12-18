@@ -23,6 +23,7 @@ import { DashboardRoute } from "./DashboardRouter";
 import { RolePermissionRouter } from "./RolePermissionRouter";
 import { EmployeeRoutes } from "./EmployeeRoutes";
 import { RolesRoutes } from "./RolesRouter";
+import { returnDetailRoutes } from "./ReturnDetailRouter";
 
 const Router = express.Router();
 
@@ -44,11 +45,11 @@ Router.use("/supplier", SupplierRouter);
 Router.use("/orderSupplier", OrderSupplierRouters);
 Router.use("/discount", DiscountRouter);
 Router.use("/VariationDiscountRouter", VariationDiscountRouter);
-
 Router.use("/dashboard", DashboardRoute);
 Router.use("/customer", CustomerRoute);
 Router.use("/roles", RolePermissionRouter);
 Router.use("/employees", EmployeeRoutes);
 Router.use("/RoleSystem", RolesRoutes);
+Router.use("/return", returnDetailRoutes);
 
 export const APIs_V1 = Router;

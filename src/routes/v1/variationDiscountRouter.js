@@ -9,4 +9,8 @@ router.get("/:id", VariationDiscountController.getVariationDiscountById);
 router.put("/:id", VariationDiscountController.updateVariationDiscount);
 router.delete("/:id", VariationDiscountController.deleteVariationDiscount);
 
+router.get("/variations", VariationDiscountController.getProductVariations);
+router.post("/bulk", VariationDiscountController.createMultipleVariationDiscounts);
+router.get("/get/discounted-variations", VariationDiscountController.getDiscountedVariations);
+
 export const VariationDiscountRouter = router;

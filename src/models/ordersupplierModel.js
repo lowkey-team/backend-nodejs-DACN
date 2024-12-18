@@ -32,14 +32,13 @@ class OrderModel {
 
       await connection.query(
         `INSERT INTO ordersupplier 
-          (ID_Supplier, ID_Employeer, TotalPrice, OrderDate, DateOfReceipt, orderSupplier_id) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
+          (ID_Supplier, ID_Employeer, TotalPrice, OrderDate, orderSupplier_id) 
+         VALUES (?, ?, ?, ?, ?)`,
         [
           supplierId,
           employeerId,
           totalPrice,
           orderDate,
-          dateOfReceipt,
           orderSupplierId,
         ]
       );
