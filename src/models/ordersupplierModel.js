@@ -33,15 +33,8 @@ class OrderModel {
       await connection.query(
         `INSERT INTO ordersupplier 
           (ID_Supplier, ID_Employeer, TotalPrice, OrderDate, DateOfReceipt, orderSupplier_id) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [
-          supplierId,
-          employeerId,
-          totalPrice,
-          orderDate,
-          dateOfReceipt,
-          orderSupplierId,
-        ]
+         VALUES (?, ?, ?, now(), ?, ?)`,
+        [supplierId, employeerId, totalPrice, dateOfReceipt, orderSupplierId]
       );
 
       console.log("Đơn hàng nhập đã được tạo, ID:", orderSupplierId);
